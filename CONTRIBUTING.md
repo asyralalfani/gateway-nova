@@ -1,18 +1,18 @@
 # CONTRIBUTING.md
 
-Panduan untuk berkontribusi di project ini.
+Guide for contributing to this project.
 
-## Setup Development
+## Development Setup
 
-### Prasyarat
-- Node.js 20 LTS atau lebih baru
+### Prerequisites
+- Node.js 20 LTS or newer
 - pnpm 9+ (install: `npm install -g pnpm`)
-- Docker & Docker Compose (untuk testing production build)
+- Docker & Docker Compose (for testing production builds)
 
-### Langkah Setup
+### Setup Steps
 
 ```bash
-# Clone repo
+# Clone the repo
 git clone <repo-url>
 cd gateway-nova
 
@@ -22,121 +22,121 @@ pnpm install
 # Copy env example
 cp .env.example .env
 
-# Setup database
+# Set up the database
 pnpm prisma migrate dev
 pnpm prisma db seed
 
-# Jalankan dev server
+# Run the dev server
 pnpm dev
 ```
 
-Buka http://localhost:3000
+Open http://localhost:3000
 
-## Workflow Git
+## Git Workflow
 
-### Branch
+### Branches
 - `main` — production-ready, protected
-- `develop` — integrasi, deploy ke staging
-- `feature/<nama-fitur>` — fitur baru
-- `fix/<nama-bug>` — bug fix
-- `chore/<deskripsi>` — maintenance
+- `develop` — integration, deployed to staging
+- `feature/<feature-name>` — new features
+- `fix/<bug-name>` — bug fixes
+- `chore/<description>` — maintenance
 
-### Commit Message
-Pakai [Conventional Commits](https://www.conventionalcommits.org/):
+### Commit Messages
+Use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<scope>): <subject>
 
-<body opsional>
+<optional body>
 ```
 
 **Types**:
-- `feat`: fitur baru
+- `feat`: new feature
 - `fix`: bug fix
-- `docs`: perubahan dokumentasi saja
+- `docs`: documentation changes only
 - `style`: formatting, no logic change
-- `refactor`: refactor tanpa ubah behavior
-- `perf`: improvement performance
-- `test`: tambah/edit test
-- `chore`: maintenance, dependency update
+- `refactor`: refactor without behavior change
+- `perf`: performance improvement
+- `test`: add/edit tests
+- `chore`: maintenance, dependency updates
 
-**Contoh**:
+**Examples**:
 ```
 feat(tools): add drag-and-drop reorder
 fix(auth): handle expired session correctly
 docs(readme): update deployment steps
 ```
 
-### Pull Request
+### Pull Requests
 
-1. Buat branch dari `develop`
-2. Push & buat PR ke `develop`
-3. Pastikan CI passing (lint + typecheck + test)
-4. Minimal 1 reviewer approve
+1. Branch off `develop`
+2. Push & open a PR against `develop`
+3. Make sure CI is passing (lint + typecheck + tests)
+4. At least 1 reviewer approval
 5. Squash & merge
 
-**Template PR**:
+**PR Template**:
 ```markdown
-## Apa yang diubah
-<deskripsi singkat>
+## What changed
+<short description>
 
-## Kenapa
-<konteks/alasan>
+## Why
+<context/motivation>
 
 ## Testing
-- [ ] Manual test di local
-- [ ] Test otomatis ditambah/diupdate
-- [ ] Screenshot (jika UI)
+- [ ] Manual test locally
+- [ ] Automated tests added/updated
+- [ ] Screenshot (if UI)
 
 ## Checklist
 - [ ] Lint passing
 - [ ] Typecheck passing
-- [ ] Dokumentasi diupdate (jika perlu)
+- [ ] Documentation updated (if needed)
 ```
 
 ## Coding Standards
 
 ### TypeScript
-- Strict mode wajib aktif
-- Jangan pakai `any`; pakai `unknown` jika tidak tahu tipe
-- Export type dari file implementasinya, atau dari `src/types/`
+- Strict mode is mandatory
+- Don't use `any`; use `unknown` when the type is unknown
+- Export types from the implementation file, or from `src/types/`
 
 ### React
 - Server Components by default
-- Client Components hanya untuk interaktivitas (state, effect, event handler)
-- Component file 1 component per file (kecuali komponen kecil yang erat kaitannya)
+- Client Components only for interactivity (state, effects, event handlers)
+- One component per file (except for small, tightly-coupled components)
 
 ### Naming
-- Component: `PascalCase` (file & nama: `ToolCard.tsx`)
-- Helper/util: `camelCase` (file: `formatDate.ts`, function: `formatDate`)
-- Constant: `SCREAMING_SNAKE_CASE`
-- CSS class: utility Tailwind, hindari custom class kecuali perlu
+- Components: `PascalCase` (file & name: `ToolCard.tsx`)
+- Helpers/utils: `camelCase` (file: `formatDate.ts`, function: `formatDate`)
+- Constants: `SCREAMING_SNAKE_CASE`
+- CSS classes: Tailwind utilities; avoid custom classes unless necessary
 
 ### Formatting
-- Prettier dijalankan otomatis di pre-commit hook
-- 2 spasi indentation
-- Single quote untuk string
-- Trailing comma di multiline
+- Prettier runs automatically in the pre-commit hook
+- 2-space indentation
+- Single quotes for strings
+- Trailing commas on multiline
 - Max line length 100
 
-## Menambah Fitur Baru
+## Adding a New Feature
 
-### 1. Diskusi dulu
-Buka issue dengan label `proposal` sebelum coding fitur besar.
+### 1. Discuss first
+Open an issue labeled `proposal` before coding any large feature.
 
-### 2. Update dokumentasi
-- Jika ubah arsitektur → update `ARCHITECTURE.md`
-- Jika ubah scope → update `PROJECT.md`
-- Jika tambah env var → update `.env.example` & `README.md`
+### 2. Update documentation
+- Architecture change → update `ARCHITECTURE.md`
+- Scope change → update `PROJECT.md`
+- New env var → update `.env.example` & `README.md`
 
-### 3. Tambah test
-Minimal:
-- Unit test untuk logika di `src/lib/`
-- Integration test untuk Server Actions
+### 3. Add tests
+At minimum:
+- Unit tests for logic in `src/lib/`
+- Integration tests for Server Actions
 
-## Menambah Komponen UI
+## Adding UI Components
 
-Pakai shadcn/ui sebanyak mungkin:
+Lean on shadcn/ui as much as possible:
 
 ```bash
 pnpm dlx shadcn@latest add button
@@ -144,53 +144,53 @@ pnpm dlx shadcn@latest add card
 pnpm dlx shadcn@latest add dialog
 ```
 
-Custom component baru di `src/components/`. Pastikan:
-- Pakai TypeScript dengan props yang ter-type
-- Support dark mode (pakai Tailwind class yang theme-aware)
-- Accessible (ARIA labels, keyboard navigation)
+New custom components go in `src/components/`. Make sure they:
+- Use TypeScript with typed props
+- Support dark mode (use theme-aware Tailwind classes)
+- Are accessible (ARIA labels, keyboard navigation)
 
-## Database Migration
+## Database Migrations
 
 ```bash
-# Buat migration baru setelah edit schema
+# Create a new migration after editing the schema
 pnpm prisma migrate dev --name describe_what_changed
 
-# Apply migration di production (otomatis saat container start)
+# Apply migrations in production (automatic on container start)
 pnpm prisma migrate deploy
 ```
 
-**Penting**:
-- Migration commit ke git
-- Jangan pernah edit migration yang sudah di-commit
-- Jika butuh rollback → buat migration baru yang reverse
+**Important**:
+- Commit migrations to git
+- Never edit a migration that has already been committed
+- For a rollback, create a new migration that reverses the change
 
 ## Testing
 
 ```bash
-pnpm test          # Jalankan semua test
+pnpm test          # Run all tests
 pnpm test:watch    # Watch mode
 pnpm test:e2e      # End-to-end (Playwright)
 ```
 
-## Reporting Bug
+## Reporting Bugs
 
-Buka issue dengan template:
+Open an issue with this template:
 
 ```markdown
-**Versi**: v1.x.x
+**Version**: v1.x.x
 **Browser/OS**: Chrome 120 / Ubuntu 22.04
 
-**Langkah Reproduce**:
+**Steps to reproduce**:
 1. ...
 2. ...
 
 **Expected**: ...
 **Actual**: ...
 
-**Screenshot**: (jika ada)
-**Log**: (jika ada)
+**Screenshot**: (if available)
+**Logs**: (if available)
 ```
 
-## Pertanyaan?
+## Questions?
 
-Tanya di channel `#gateway-nova` di Slack atau buka discussion di repo.
+Ask in the `#gateway-nova` Slack channel or open a discussion in the repo.

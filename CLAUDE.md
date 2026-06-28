@@ -1,114 +1,113 @@
 # CLAUDE.md
 
-Panduan untuk Claude (dan AI assistant lain) saat bekerja di project ini. File ini dibaca otomatis oleh Claude Code.
+Guidance for Claude (and other AI assistants) working in this project. This file is auto-loaded by Claude Code.
 
-## Tentang Project
+## About the Project
 
-**Gateway Nova** adalah aplikasi self-hosted untuk mendokumentasikan dan mengorganisir URL/tools internal tim. Mirip [gethomepage.dev](https://gethomepage.dev/), tetapi dengan UI editor sehingga anggota tim bisa menambah/mengedit entri langsung dari browser tanpa edit file config.
+**Gateway Nova** is a self-hosted app for documenting and organizing internal team tools/URLs. Similar to [gethomepage.dev](https://gethomepage.dev/), but with an editor UI so team members can add and edit entries directly from the browser without touching config files.
 
-**Tujuan utama:**
-- Satu tempat untuk semua tools internal (Jenkins, Grafana, dashboard internal, dll)
-- Mudah ditambah/diedit oleh anggota tim via UI
-- Self-hosted via Docker, tanpa dependency eksternal
-- Cepat di-load, ringan, dan tidak butuh maintenance besar
+**Primary goals:**
+- A single place for every internal tool (Jenkins, Grafana, internal dashboards, etc.)
+- Easy for team members to add and edit via the UI
+- Self-hosted via Docker, no external dependencies
+- Fast to load, lightweight, and low-maintenance
 
 ## Tech Stack
 
 - **Runtime**: Node.js 20 LTS
 - **Framework**: Next.js 15 (App Router) + React 19
-- **Bahasa**: TypeScript strict mode
+- **Language**: TypeScript strict mode
 - **Database**: PostgreSQL 16 via Prisma ORM
 - **Styling**: Tailwind CSS v4
-- **Komponen UI**: shadcn/ui (Radix primitives)
-- **Auth**: NextAuth.js v5 (Credentials provider, opsional)
+- **UI components**: shadcn/ui (Radix primitives)
+- **Auth**: NextAuth.js v5 (Credentials provider, optional)
 - **Validation**: Zod
 - **Deployment**: Docker (multi-stage build), single container
 
-## Prinsip & Konvensi
+## Principles & Conventions
 
-### Bahasa
-- **Kode, komentar, dan commit message**: Bahasa Inggris
-- **Dokumentasi (.md), error message untuk user, UI label**: Bahasa Indonesia
-- Variabel & function name: camelCase, deskriptif tanpa singkatan ambigu
+### Language
+- **Everything in English**: code, comments, commit messages, documentation (.md), UI labels, error messages shown to users.
+- Variable & function names: camelCase, descriptive, no ambiguous abbreviations.
 
-### Struktur File
-- Server Components by default; tambahkan `"use client"` hanya jika perlu interaktivitas
-- Database queries hanya di Server Components atau Server Actions, tidak pernah di Client Components
-- Komponen reusable di `src/components/ui/` (shadcn) dan `src/components/` (custom)
-- Logika bisnis di `src/lib/`, jangan campur dengan komponen
-- Tipe data di `src/types/` atau di file yang sama dengan implementasinya jika hanya digunakan satu tempat
+### File Structure
+- Server Components by default; add `"use client"` only when you need interactivity
+- Database queries only in Server Components or Server Actions — never in Client Components
+- Reusable components in `src/components/ui/` (shadcn) and `src/components/` (custom)
+- Business logic in `src/lib/` — don't mix with components
+- Types in `src/types/`, or co-located with their implementation when used in only one place
 
 ### Database
-- Skema di `prisma/schema.prisma` adalah source of truth
-- Setiap perubahan skema → buat migration: `pnpm prisma migrate dev --name describe_change`
-- Jangan pernah edit file di `prisma/migrations/` yang sudah di-commit
-- Folder data PostgreSQL (`data/postgres/`) tidak boleh masuk git — pastikan ada di `.gitignore`
+- The schema in `prisma/schema.prisma` is the source of truth
+- Any schema change → create a migration: `pnpm prisma migrate dev --name describe_change`
+- Never edit files in `prisma/migrations/` that are already committed
+- The PostgreSQL data directory (`data/postgres/`) must not be committed — make sure it stays in `.gitignore`
 
-### Komponen UI
-- Gunakan shadcn/ui sebagai default; tambahkan komponen via `pnpm dlx shadcn@latest add <component>`
-- Gunakan utility class Tailwind, hindari CSS file terpisah kecuali untuk hal khusus
-- Untuk icon, gunakan `lucide-react`
-- Untuk form, gunakan `react-hook-form` + Zod resolver
+### UI Components
+- Use shadcn/ui by default; add components with `pnpm dlx shadcn@latest add <component>`
+- Use Tailwind utility classes; avoid separate CSS files unless there's a specific need
+- For icons, use `lucide-react`
+- For forms, use `react-hook-form` + the Zod resolver
 
 ### Server Actions vs API Routes
-- **Server Actions**: untuk mutation (create, update, delete) yang dipanggil dari komponen React
-- **API Routes** (`src/app/api/`): untuk endpoint yang dipanggil dari luar (webhook, integrasi) atau butuh streaming
+- **Server Actions**: for mutations (create, update, delete) called from React components
+- **API Routes** (`src/app/api/`): for endpoints called from outside (webhooks, integrations) or that need streaming
 
 ### Error Handling
-- Throw error di server, tangkap di client dengan error boundary atau toast
-- Pesan error untuk user dalam Bahasa Indonesia dan tidak expose detail teknis
-- Log error teknis ke stdout (akan ditangkap Docker logs)
+- Throw errors on the server, catch on the client with an error boundary or toast
+- User-facing error messages must be in English and must not expose technical detail
+- Log technical errors to stdout (captured by Docker logs)
 
-## Hal yang BOLEH dilakukan tanpa konfirmasi
+## Allowed Without Confirmation
 
-- Menambah komponen UI baru di `src/components/`
-- Menambah halaman baru di `src/app/`
-- Refactor untuk kejelasan tanpa mengubah behavior
-- Menambah test
-- Menambah komentar atau JSDoc
-- Update dependency patch version
+- Adding new UI components in `src/components/`
+- Adding new pages in `src/app/`
+- Refactoring for clarity without changing behavior
+- Adding tests
+- Adding comments or JSDoc
+- Updating dependency patch versions
 
-## Hal yang HARUS dikonfirmasi dulu
+## Requires Confirmation First
 
-- Perubahan skema database (`prisma/schema.prisma`)
-- Penambahan dependency baru (kecuali shadcn components)
-- Perubahan struktur autentikasi
-- Perubahan Dockerfile atau docker-compose.yml
-- Perubahan environment variable yang dibutuhkan
-- Refactor besar yang menyentuh > 5 file
+- Database schema changes (`prisma/schema.prisma`)
+- Adding new dependencies (except shadcn components)
+- Changes to the authentication structure
+- Changes to `Dockerfile` or `docker-compose.yml`
+- Changes to required environment variables
+- Large refactors touching > 5 files
 
-## Command Penting
+## Key Commands
 
 ```bash
 # Development
-pnpm dev                          # Jalankan dev server di :3000
-pnpm prisma studio                # Buka Prisma Studio (DB GUI)
-pnpm prisma migrate dev           # Apply migration baru
-pnpm prisma generate              # Regenerate Prisma Client
+pnpm dev                          # Run dev server on :3000
+pnpm prisma studio                # Open Prisma Studio (DB GUI)
+pnpm prisma migrate dev           # Apply a new migration
+pnpm prisma generate              # Regenerate the Prisma Client
 
 # Quality
 pnpm lint                         # ESLint
 pnpm typecheck                    # TypeScript check
-pnpm test                         # Run tests (jika sudah disetup)
+pnpm test                         # Run tests (once set up)
 
 # Build & Deploy
 pnpm build                        # Production build
-docker compose up -d --build      # Build & jalankan via Docker
-docker compose logs -f app        # Lihat logs
+docker compose up -d --build      # Build & run via Docker
+docker compose logs -f app        # Tail logs
 ```
 
-## Yang Tidak Boleh
+## Don'ts
 
-- Jangan commit file `.env` (gunakan `.env.example` sebagai template)
-- Jangan hardcode URL/credentials di kode
-- Jangan disable TypeScript strict mode atau ESLint rules tanpa diskusi
-- Jangan tambah dependency besar (>500KB) tanpa konfirmasi
-- Jangan ubah file di `prisma/migrations/` yang sudah ada
-- Jangan hapus data user via migration; selalu buat path migration yang aman
+- Don't commit `.env` files (use `.env.example` as the template)
+- Don't hardcode URLs or credentials in code
+- Don't disable TypeScript strict mode or ESLint rules without discussion
+- Don't add large dependencies (>500KB) without confirmation
+- Don't edit existing files in `prisma/migrations/`
+- Don't delete user data via migration; always design migrations to be safe
 
-## Konteks Tim
+## Team Context
 
-- Tim development: ~5-10 orang
-- User aplikasi: seluruh anggota tim (~30-50 orang)
-- Bahasa tim: Indonesia (komunikasi), Inggris (kode)
+- Development team: ~5-10 people
+- App users: the entire team (~30-50 people)
+- Team language: Indonesian (verbal/chat communication), English (everything written into the repo)
 - Timezone: Asia/Jakarta (WIB)

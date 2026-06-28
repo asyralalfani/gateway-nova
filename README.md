@@ -1,61 +1,61 @@
 # Gateway Nova
 
-> Self-hosted internal homepage untuk mendokumentasikan tools tim. Mirip [gethomepage.dev](https://gethomepage.dev/), tapi dengan UI editor sehingga anggota tim bisa menambah & mengedit langsung dari browser.
+> Self-hosted internal homepage for documenting team tools. Similar to [gethomepage.dev](https://gethomepage.dev/), but with a built-in editor UI so team members can add and edit entries directly from the browser.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)
 
-## ✨ Fitur
+## ✨ Features
 
-- 📋 **Daftar tools terorganisir** dalam kategori
-- 🔍 **Search & filter** by nama, tag, atau kategori
-- ✏️ **UI editor** — tambah/edit tanpa edit file config
-- 🎨 **Dark mode** otomatis mengikuti sistem
-- 🐳 **Docker-ready** — deploy dengan satu command (app + PostgreSQL)
-- 🔐 **Auth opsional** — pakai kalau perlu, skip kalau di internal network
-- 🔌 **Port customizable** — `APP_PORT` & `POSTGRES_PORT` lewat `.env`, default non-standard supaya tidak bentrok
+- 📋 **Organized tool list** grouped by category
+- 🔍 **Search & filter** by name, tag, or category
+- ✏️ **Editor UI** — add/edit without touching config files
+- 🎨 **Dark mode** follows the system theme automatically
+- 🐳 **Docker-ready** — deploy with a single command (app + PostgreSQL)
+- 🔐 **Optional auth** — enable when needed, skip on a trusted internal network
+- 🔌 **Customizable ports** — `APP_PORT` & `POSTGRES_PORT` via `.env`, defaults are non-standard to avoid clashes
 
 ## 🚀 Quick Start (Production)
 
 ```bash
-# Clone repo
+# Clone the repo
 git clone https://github.com/asyralalfani/gateway-nova.git
 cd gateway-nova
 
-# Copy env file
+# Copy the env file
 cp .env.example .env
-# Edit .env sesuai kebutuhan
+# Edit .env to taste
 
-# Build & jalankan
+# Build & run
 docker compose up -d
 
-# Cek logs
+# Tail the logs
 docker compose logs -f
 ```
 
-Aplikasi tersedia di `http://localhost:3100` (port default; ubah `APP_PORT` di `.env` kalau mau berbeda).
+The app is available at `http://localhost:3100` (default port; change `APP_PORT` in `.env` if needed).
 
 ## 🛠 Development
 
 ```bash
-# Install pnpm dulu jika belum
+# Install pnpm first if you haven't
 npm install -g pnpm
 
 # Install deps
 pnpm install
 
-# Setup database
+# Set up the database
 cp .env.example .env
 pnpm prisma migrate dev
 pnpm prisma db seed
 
-# Jalankan dev server
+# Run the dev server
 pnpm dev
 ```
 
-Detail lengkap di [CONTRIBUTING.md](./CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide.
 
-## 📂 Struktur Project
+## 📂 Project Structure
 
 ```
 gateway-nova/
@@ -70,15 +70,15 @@ gateway-nova/
 └── ...
 ```
 
-Detail di [ARCHITECTURE.md](./ARCHITECTURE.md).
+More detail in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-## ⚙️ Konfigurasi
+## ⚙️ Configuration
 
-Copy `.env.example` → `.env`, lalu sesuaikan. Variabel utama:
+Copy `.env.example` → `.env`, then adjust. Key variables:
 
 ```env
-# ===== Port di host =====
-# Default non-standard supaya tidak bentrok dengan service lain.
+# ===== Host ports =====
+# Non-standard defaults to avoid clashes with other services.
 APP_PORT=3100
 POSTGRES_PORT=5433
 
@@ -87,74 +87,74 @@ POSTGRES_USER=homepage
 POSTGRES_PASSWORD=homepage
 POSTGRES_DB=homepage
 
-# Untuk akses dari host (Prisma Studio, migrate dev) → pakai POSTGRES_PORT.
-# Untuk akses antar container (app → db) → docker-compose pakai port internal 5432.
+# For host access (Prisma Studio, migrate dev) → use POSTGRES_PORT.
+# For container-to-container (app → db) → docker-compose uses internal port 5432.
 DATABASE_URL="postgresql://homepage:homepage@localhost:5433/homepage?schema=public"
 
-# ===== Auth (opsional) =====
+# ===== Auth (optional) =====
 AUTH_ENABLED=false
-AUTH_SECRET=""                              # wajib kalau AUTH_ENABLED=true
-NEXTAUTH_URL="http://localhost:3100"        # sesuaikan dengan APP_PORT
+AUTH_SECRET=""                              # required when AUTH_ENABLED=true
+NEXTAUTH_URL="http://localhost:3100"        # match APP_PORT
 ```
 
-> **Catatan port**: kalau ubah `APP_PORT`, ikut update `NEXTAUTH_URL`.
-> Kalau ubah `POSTGRES_PORT`, ikut update port di `DATABASE_URL` (host-side).
-> Port internal container (3000 untuk app, 5432 untuk postgres) tetap, tidak berubah.
+> **Port notes**: if you change `APP_PORT`, also update `NEXTAUTH_URL`.
+> If you change `POSTGRES_PORT`, also update the port in `DATABASE_URL` (host side).
+> Internal container ports (3000 for the app, 5432 for postgres) stay the same.
 
-Detail semua env var di [ARCHITECTURE.md](./ARCHITECTURE.md#environment-variables).
+Full env var reference in [ARCHITECTURE.md](./ARCHITECTURE.md#environment-variables).
 
 ## 🐳 Deployment
 
-### Docker Compose (rekomendasi)
+### Docker Compose (recommended)
 
-File `docker-compose.yml` di repo sudah lengkap (app + PostgreSQL + healthcheck + resource limit). Cukup:
+The `docker-compose.yml` in the repo is complete (app + PostgreSQL + healthchecks + resource limits). Just:
 
 ```bash
 cp .env.example .env
-# Edit APP_PORT / POSTGRES_PORT / password sesuai kebutuhan
+# Edit APP_PORT / POSTGRES_PORT / passwords as needed
 docker compose up -d --build
 docker compose logs -f app
 ```
 
-PostgreSQL di-bind ke `127.0.0.1` saja (tidak ekspos publik). App komunikasi ke db lewat docker network (`db:5432`), jadi `POSTGRES_PORT` hanya relevan untuk akses dari host.
+PostgreSQL is bound to `127.0.0.1` only (not exposed publicly). The app talks to the db over the docker network (`db:5432`), so `POSTGRES_PORT` only matters for host access.
 
-### Behind Reverse Proxy
+### Behind a Reverse Proxy
 
-Contoh dengan Traefik (port internal container tetap 3000):
+Example with Traefik (internal container port stays at 3000):
 
 ```yaml
 services:
   app:
-    # ... config di atas
+    # ... config above
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.gateway-nova.rule=Host(`gateway.tim.internal`)"
+      - "traefik.http.routers.gateway-nova.rule=Host(`gateway.team.internal`)"
       - "traefik.http.services.gateway-nova.loadbalancer.server.port=3000"
 ```
 
 ## 💾 Backup
 
-Data PostgreSQL ada di `./data/postgres/` (mounted volume). Untuk backup konsisten saat aplikasi running, pakai `pg_dump`:
+PostgreSQL data lives in `./data/postgres/` (mounted volume). For consistent backups while the app is running, use `pg_dump`:
 
 ```bash
-# Manual backup (ke file .dump format custom — bisa di-restore dengan pg_restore)
+# Manual backup (custom format .dump — restore with pg_restore)
 docker compose exec -T db pg_dump -U homepage -F c homepage > backups/homepage-$(date +%F).dump
 
 # Restore
 docker compose exec -T db pg_restore -U homepage -d homepage --clean < backups/homepage-2026-06-28.dump
 
-# Cron job harian (jam 02:00)
+# Daily cron (02:00)
 0 2 * * * cd /path/to/gateway-nova && docker compose exec -T db pg_dump -U homepage -F c homepage > backups/homepage-$(date +\%F).dump
 ```
 
-Service `backup` siap-pakai sudah disiapkan (commented out) di `docker-compose.yml` — uncomment kalau mau auto-backup harian + retention 30 hari.
+A ready-to-use `backup` service is already in `docker-compose.yml` (commented out) — uncomment it for automatic daily backups with 30-day retention.
 
-## 📖 Dokumentasi
+## 📖 Documentation
 
 - [PROJECT.md](./PROJECT.md) — overview, scope, roadmap
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — keputusan teknis & arsitektur
-- [CONTRIBUTING.md](./CONTRIBUTING.md) — panduan development
-- [CLAUDE.md](./CLAUDE.md) — panduan untuk AI assistant (Claude Code)
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — technical decisions & architecture
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — development guide
+- [CLAUDE.md](./CLAUDE.md) — guide for AI assistants (Claude Code)
 
 ## 📝 License
 

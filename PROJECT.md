@@ -1,111 +1,111 @@
 # PROJECT.md
 
-Dokumen perencanaan dan scope project. Update file ini saat ada perubahan tujuan atau scope.
+Project planning and scope document. Update this file whenever goals or scope change.
 
-## Ringkasan
+## Summary
 
-**Gateway Nova** adalah aplikasi web self-hosted untuk mengorganisir dan mendokumentasikan tools/URL internal tim dalam satu tempat. Dideploy via Docker.
+**Gateway Nova** is a self-hosted web app for organizing and documenting internal team tools/URLs in a single place. Deployed via Docker.
 
-## Masalah yang Dipecahkan
+## Problems It Solves
 
-Saat ini tim kesulitan:
-- Mengingat URL semua tools internal (Jenkins, Grafana, Confluence, dashboard internal, dll)
-- Onboarding anggota baru harus dikasih daftar manual via chat/email
-- Tidak ada satu tempat untuk lihat "semua tools yang dipakai tim"
-- Bookmark browser bersifat personal, tidak shareable
+The team currently struggles with:
+- Remembering URLs for every internal tool (Jenkins, Grafana, Confluence, internal dashboards, etc.)
+- Onboarding new members requires sending lists manually via chat/email
+- No single place to see "all the tools the team uses"
+- Browser bookmarks are personal and can't be shared
 
-## Solusi
+## Solution
 
-Aplikasi homepage internal dengan:
-1. **Daftar tools terorganisir** dalam kategori/grup
-2. **UI editor** sehingga anggota tim bisa menambah/mengedit langsung
-3. **Search & filter** untuk menemukan tools cepat
-4. **Self-hosted** via Docker, data tetap di infrastruktur tim
-5. **Sederhana** — tidak butuh database server, cukup SQLite
+An internal homepage app with:
+1. **Organized tool list** grouped by category
+2. **Editor UI** so team members can add and edit entries directly
+3. **Search & filter** for finding tools fast
+4. **Self-hosted** via Docker — data stays on team infrastructure
+5. **Simple** — bundled PostgreSQL via docker-compose, no external services
 
-## Scope MVP (v1.0)
+## MVP Scope (v1.0)
 
-### Yang Termasuk
+### Included
 
-- [x] CRUD entries (judul, URL, deskripsi, ikon, kategori, tags)
-- [x] Pengelompokan tools dalam kategori (misal: "DevOps", "Monitoring", "Dokumentasi")
-- [x] Search by nama/deskripsi/tag
-- [x] Filter by kategori atau tag
-- [x] Layout grid yang rapi dan responsive (desktop & mobile)
-- [x] Dark mode (default mengikuti sistem)
-- [x] Autentikasi sederhana (username + password) — opsional di-enable via env
-- [x] Role: admin (CRUD) vs viewer (read-only)
-- [x] Docker deployment dengan single command
+- [x] CRUD entries (title, URL, description, icon, category, tags)
+- [x] Tool grouping by category (e.g. "DevOps", "Monitoring", "Documentation")
+- [x] Search by name/description/tag
+- [x] Filter by category or tag
+- [x] Tidy responsive grid layout (desktop & mobile)
+- [x] Dark mode (follows system by default)
+- [x] Simple authentication (username + password) — optional, enabled via env
+- [x] Roles: admin (CRUD) vs viewer (read-only)
+- [x] Docker deployment with a single command
 
-### Yang TIDAK Termasuk (di luar MVP)
+### Out of Scope (beyond MVP)
 
-- ❌ Widget yang menampilkan status service real-time (mungkin v2)
+- ❌ Real-time service status widgets (maybe v2)
 - ❌ SSO/OAuth integration (v2)
 - ❌ Multi-tenant / multi-workspace
-- ❌ Notifikasi atau alerting
-- ❌ Mobile app native
-- ❌ Audit log (mungkin v1.1 jika dibutuhkan)
+- ❌ Notifications or alerting
+- ❌ Native mobile app
+- ❌ Audit log (maybe v1.1 if needed)
 
 ## Roadmap
 
-### v1.0 — MVP (target: 4 minggu)
-- Semua fitur scope MVP
-- Dokumentasi setup
-- Docker image siap deploy
+### v1.0 — MVP (target: 4 weeks)
+- All MVP scope features
+- Setup documentation
+- Docker image ready to deploy
 
 ### v1.1 — Polish
 - Drag & drop reorder
-- Import/export config sebagai JSON/YAML
-- Audit log sederhana
-- Backup otomatis SQLite
+- Import/export config as JSON/YAML
+- Simple audit log
+- Automatic PostgreSQL backups
 
 ### v2.0 — Integrations
-- Widget status service (ping URL, status code, response time)
+- Service status widgets (URL ping, status code, response time)
 - OAuth/SSO (Google, GitHub, generic OIDC)
-- Tag favorit per user
+- Per-user favorite tags
 
-## User Persona
+## User Personas
 
 ### 1. Tech Lead "Andi"
-- Setup awal aplikasi
-- Tambah kategori dan tools dasar
-- Manage user lain
-- **Butuh**: deployment mudah, backup terjamin
+- Initial app setup
+- Adds base categories and tools
+- Manages other users
+- **Needs**: easy deployment, reliable backups
 
-### 2. Engineer "Budi" (paling sering)
-- Buka aplikasi tiap pagi untuk akses tools
-- Sesekali tambah tool baru yang dipakai timnya
-- **Butuh**: search cepat, akses 1-2 klik ke tool
+### 2. Engineer "Budi" (most frequent user)
+- Opens the app each morning to access tools
+- Occasionally adds a new tool their squad uses
+- **Needs**: fast search, 1-2 clicks to any tool
 
 ### 3. Manager "Citra"
-- Onboarding anggota baru
-- Lihat overview tools yang dipakai
-- **Butuh**: tampilan rapi, mudah di-share
+- Onboards new members
+- Wants an overview of tools in use
+- **Needs**: clean layout, easy to share
 
-## Metrik Sukses
+## Success Metrics
 
-- ⏱️ Time-to-first-tool < 3 detik dari buka aplikasi
-- 👥 100% anggota tim pakai dalam 1 bulan pertama
-- 📝 Minimal 30 tools terdaftar dalam 2 minggu pertama
-- 🔧 Setup di server baru < 10 menit
+- ⏱️ Time-to-first-tool < 3 seconds from app open
+- 👥 100% of team members using it within the first month
+- 📝 At least 30 tools registered in the first 2 weeks
+- 🔧 Setup on a fresh server < 10 minutes
 
-## Risiko & Mitigasi
+## Risks & Mitigations
 
-| Risiko | Dampak | Mitigasi |
-|--------|--------|----------|
-| SQLite tidak cukup untuk scale | Medium | Prisma abstraksi DB; bisa migrasi ke PostgreSQL nanti |
-| Tim tidak update entri | High | UI sangat sederhana; reminder di Slack |
-| Server downtime | Medium | Backup SQLite otomatis ke S3/storage tim |
-| Lupa password admin | Low | CLI command untuk reset password |
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| PostgreSQL needs tuning for scale | Low | Default config handles thousands of entries; tune `shared_buffers`/`work_mem` later if needed |
+| Team doesn't keep entries up to date | High | Very simple UI; periodic Slack reminders |
+| Server downtime | Medium | Automated PostgreSQL backups to team S3/storage |
+| Forgotten admin password | Low | CLI command for password reset |
 
 ## Stakeholders
 
-- **Owner**: [Nama Anda]
-- **Tim Dev**: [Tim Anda]
-- **User**: Seluruh tim engineering (~30-50 orang)
+- **Owner**: [Your Name]
+- **Dev Team**: [Your Team]
+- **Users**: Entire engineering team (~30-50 people)
 
-## Link Terkait
+## Related Links
 
-- Inspirasi: https://gethomepage.dev/
-- Inspirasi: https://heimdall.site/
-- Inspirasi: https://github.com/Lissy93/dashy
+- Inspiration: https://gethomepage.dev/
+- Inspiration: https://heimdall.site/
+- Inspiration: https://github.com/Lissy93/dashy

@@ -1,8 +1,8 @@
 # ARCHITECTURE.md
 
-Keputusan teknis dan arsitektur sistem.
+Technical and architectural decisions for the system.
 
-## Arsitektur Tingkat Tinggi
+## High-Level Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -12,7 +12,7 @@ Keputusan teknis dan arsitektur sistem.
                   │ HTTPS
                   ▼
 ┌─────────────────────────────────────────────┐
-│          Reverse Proxy (opsional)            │
+│          Reverse Proxy (optional)            │
 │         Traefik / Nginx / Caddy              │
 └─────────────────┬───────────────────────────┘
                   │ HTTP
@@ -29,104 +29,107 @@ Keputusan teknis dan arsitektur sistem.
 │  │  ┌─────────────────────────────┐      │  │
 │  │  │   Prisma Client (ORM)        │      │  │
 │  │  └─────────────┬───────────────┘      │  │
-│  │                ▼                       │  │
-│  │  ┌─────────────────────────────┐      │  │
-│  │  │   SQLite (file: /data/app.db)│     │  │
-│  │  └─────────────────────────────┘      │  │
-│  └───────────────────────────────────────┘  │
-│         Volume: ./data → /data              │
+│  └────────────────┼──────────────────────┘  │
+└───────────────────┼─────────────────────────┘
+                    │ docker network (db:5432)
+                    ▼
+┌─────────────────────────────────────────────┐
+│       Docker Container: db                   │
+│         PostgreSQL 16-alpine                 │
+│   Volume: ./data/postgres → /var/lib/...    │
 └─────────────────────────────────────────────┘
 ```
 
-## Keputusan Arsitektur
+## Architecture Decisions
 
-### ADR-001: Pakai Next.js Fullstack (bukan FE/BE terpisah)
+### ADR-001: Next.js fullstack (not separate FE/BE)
 
-**Konteks**: Tim kecil, fitur tidak banyak, butuh deployment sederhana.
+**Context**: Small team, limited surface area, needs simple deployment.
 
-**Keputusan**: Pakai Next.js sebagai fullstack framework (Server Components + Server Actions + API Routes).
+**Decision**: Use Next.js as a fullstack framework (Server Components + Server Actions + API Routes).
 
-**Alasan**:
-- Satu codebase, satu deployment artifact
-- Type-safety end-to-end tanpa codegen (bagi type langsung antara server & client)
-- Server Components mengurangi JavaScript bundle untuk client
-- Server Actions menghilangkan kebutuhan API routes untuk mutasi sederhana
+**Rationale**:
+- One codebase, one deployment artifact
+- End-to-end type safety without codegen (share types directly between server & client)
+- Server Components reduce JavaScript shipped to the client
+- Server Actions remove the need for API routes for simple mutations
 
-**Konsekuensi**:
-- Vendor-lock ringan ke Next.js
-- Tidak bisa pakai backend non-Node (tapi tidak butuh)
+**Consequences**:
+- Mild vendor lock-in to Next.js
+- Can't use a non-Node backend (not needed)
 
-### ADR-002: SQLite, bukan PostgreSQL/MySQL
+### ADR-002: PostgreSQL via docker-compose
 
-**Konteks**: Data kecil (puluhan-ratusan entri), tim kecil, butuh deployment sederhana.
+**Context**: Need a reliable, well-understood relational store with type-safe access and headroom for moderate growth.
 
-**Keputusan**: SQLite dengan file persistence via Docker volume.
+**Decision**: PostgreSQL 16 bundled via docker-compose, with data persisted to a host-bound volume (`./data/postgres`).
 
-**Alasan**:
-- Zero-config: tidak butuh DB server terpisah
-- Backup = copy file
-- Cukup untuk ribuan entri & puluhan concurrent user
-- Prisma abstraksi DB, mudah migrasi ke Postgres nanti
+**Rationale**:
+- Battle-tested, predictable behavior under concurrent writes
+- Plays well with Prisma migrations and Prisma Studio
+- Simple `pg_dump`/`pg_restore` workflow for backups
+- Easy to upgrade or move to managed PostgreSQL (RDS, Cloud SQL) later without app changes
+- Bundling via docker-compose keeps deployment to a single command
 
-**Konsekuensi**:
-- Tidak cocok kalau aplikasi tumbuh jadi multi-region / horizontal scale
-- Write concurrency terbatas (tapi tidak masalah untuk use case ini)
+**Consequences**:
+- One extra container vs an embedded DB
+- Admin needs to mind volume permissions on the host
 
-### ADR-003: Prisma sebagai ORM
+### ADR-003: Prisma as the ORM
 
-**Konteks**: Butuh type-safe DB access dan migration management.
+**Context**: We want type-safe DB access and a clean migration story.
 
-**Keputusan**: Prisma ORM.
+**Decision**: Use Prisma ORM.
 
-**Alasan**:
-- Schema-first, type-safe
-- Migration system bagus
-- DX excellent (autocomplete, Prisma Studio)
-- Bisa switch DB engine via connector
+**Rationale**:
+- Schema-first and type-safe
+- Solid migration system
+- Excellent DX (autocomplete, Prisma Studio)
+- Can swap the underlying DB engine via the connector
 
-### ADR-004: shadcn/ui sebagai komponen library
+### ADR-004: shadcn/ui as the component library
 
-**Konteks**: Butuh komponen UI bagus tanpa over-engineering.
+**Context**: Need solid UI components without over-engineering.
 
-**Keputusan**: shadcn/ui (copy-paste components, bukan npm package).
+**Decision**: shadcn/ui (copy-paste components, not an npm package).
 
-**Alasan**:
-- Komponen di-copy ke codebase → bisa di-customize bebas
+**Rationale**:
+- Components are copied into the codebase → free to customize
 - Built on Radix (accessible)
-- Pair sempurna dengan Tailwind
-- Tidak ada lock-in versi
+- Pairs perfectly with Tailwind
+- No version lock-in
 
-### ADR-005: NextAuth.js opsional via env flag
+### ADR-005: NextAuth.js, optional via env flag
 
-**Konteks**: Beberapa tim mau public di internal network, beberapa mau auth.
+**Context**: Some teams want the app public on an internal network; others want auth.
 
-**Keputusan**: Auth bisa di-enable/disable via `AUTH_ENABLED=true|false`.
+**Decision**: Auth can be enabled/disabled via `AUTH_ENABLED=true|false`.
 
-**Alasan**:
-- Fleksibel untuk berbagai use case
-- Default off → quick start
-- Bisa di-enable nanti tanpa breaking change
+**Rationale**:
+- Flexible across use cases
+- Default off → fast start
+- Can be enabled later without a breaking change
 
-## Struktur Folder
+## Folder Structure
 
 ```
 gateway-nova/
 ├── .claude/                    # Claude Code settings
 ├── prisma/
-│   ├── schema.prisma           # Schema database
-│   ├── migrations/             # Migration files (commit ke git)
-│   └── seed.ts                 # Seed data untuk dev
+│   ├── schema.prisma           # Database schema
+│   ├── migrations/             # Migration files (committed to git)
+│   └── seed.ts                 # Seed data for dev
 ├── src/
 │   ├── app/                    # Next.js App Router
-│   │   ├── (auth)/             # Route group auth (login, register)
-│   │   ├── (dashboard)/        # Route group dashboard utama
-│   │   ├── api/                # API routes (jika perlu)
+│   │   ├── (auth)/             # Auth route group (login, register)
+│   │   ├── (dashboard)/        # Main dashboard route group
+│   │   ├── api/                # API routes (when needed)
 │   │   ├── layout.tsx          # Root layout
-│   │   └── page.tsx            # Homepage (list tools)
+│   │   └── page.tsx            # Homepage (tools list)
 │   ├── components/
 │   │   ├── ui/                 # shadcn/ui components
-│   │   ├── tool-card.tsx       # Card untuk satu tool
-│   │   ├── tool-form.tsx       # Form add/edit tool
+│   │   ├── tool-card.tsx       # Card for a single tool
+│   │   ├── tool-form.tsx       # Add/edit tool form
 │   │   ├── category-section.tsx
 │   │   └── search-bar.tsx
 │   ├── lib/
@@ -139,7 +142,7 @@ gateway-nova/
 │   └── types/
 │       └── index.ts            # Shared types
 ├── public/                     # Static assets, icons
-├── data/                       # SQLite database (gitignored, mounted as volume)
+├── data/postgres/              # PostgreSQL data (gitignored, mounted volume)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .dockerignore
@@ -166,14 +169,14 @@ model Tool {
   name        String
   url         String
   description String?
-  iconUrl     String?  // URL ke icon, atau identifier dari icon library
+  iconUrl     String?  // URL to an icon, or an identifier from an icon library
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
   tags        Tag[]    @relation("ToolTags")
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  createdBy   String?  // User ID, nullable kalau auth disabled
+  createdBy   String?  // User ID, nullable when auth is disabled
 
   @@index([categoryId])
 }
@@ -183,7 +186,7 @@ model Category {
   name        String   @unique
   description String?
   icon        String?
-  color       String?  // Hex color untuk accent
+  color       String?  // Hex color for accent
   order       Int      @default(0)
   tools       Tool[]
   createdAt   DateTime @default(now())
@@ -213,34 +216,39 @@ enum Role {
 
 ## Environment Variables
 
-| Variable | Required | Default | Deskripsi |
-|----------|----------|---------|-----------|
-| `DATABASE_URL` | yes | `file:/data/app.db` | Path SQLite |
-| `AUTH_ENABLED` | no | `false` | Enable autentikasi |
-| `AUTH_SECRET` | jika auth on | - | Random string untuk JWT |
-| `NEXTAUTH_URL` | jika auth on | - | URL public aplikasi |
-| `NODE_ENV` | no | `production` | Mode runtime |
-| `PORT` | no | `3000` | Port internal container |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `APP_PORT` | no | `3100` | Host port for the app container |
+| `POSTGRES_PORT` | no | `5433` | Host port for the postgres container (127.0.0.1 only) |
+| `POSTGRES_USER` | no | `homepage` | PostgreSQL user |
+| `POSTGRES_PASSWORD` | no | `homepage` | PostgreSQL password (change in production) |
+| `POSTGRES_DB` | no | `homepage` | PostgreSQL database name |
+| `DATABASE_URL` | yes | `postgresql://homepage:homepage@localhost:5433/homepage?schema=public` | Prisma connection string |
+| `AUTH_ENABLED` | no | `false` | Enable authentication |
+| `AUTH_SECRET` | if auth on | - | Random string for JWT |
+| `NEXTAUTH_URL` | if auth on | - | Public URL of the app |
+| `NODE_ENV` | no | `production` | Runtime mode |
 
-## Strategi Backup
+## Backup Strategy
 
-- SQLite file di `/data/app.db` di-mount sebagai Docker volume
-- Backup harian via cron: `sqlite3 /data/app.db ".backup /backups/app-$(date +%F).db"`
-- Retain 30 hari terakhir + 12 bulan (monthly)
-- Optional: upload ke S3/object storage
+- PostgreSQL data at `./data/postgres/` is mounted as a Docker volume on the host
+- Daily backup via cron: `docker compose exec -T db pg_dump -U homepage -F c homepage > backups/homepage-$(date +%F).dump`
+- Retain the last 30 days + 12 months (monthly)
+- Optional: upload to S3 / object storage
 
 ## Performance Targets
 
 - First Contentful Paint < 1.5s
 - Time to Interactive < 2.5s
-- Database query average < 50ms
+- Average database query < 50ms
 - Docker image size < 300MB (multi-stage build)
 
-## Keamanan
+## Security
 
-- Password di-hash dengan bcrypt (cost 12)
-- CSRF protection built-in dari Next.js Server Actions
-- Rate limit di login endpoint (5 attempts / 15 menit per IP)
+- Passwords hashed with bcrypt (cost 12)
+- CSRF protection built into Next.js Server Actions
+- Rate limit on the login endpoint (5 attempts / 15 minutes per IP)
 - Content Security Policy via Next.js config
-- Container jalan sebagai non-root user
-- Tidak ada credentials di image, semua via environment variable
+- Containers run as a non-root user
+- No credentials baked into the image — all via environment variables
+- PostgreSQL bound to `127.0.0.1` on the host (never exposed publicly)
