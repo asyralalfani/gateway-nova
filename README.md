@@ -19,7 +19,7 @@
 
 ```bash
 # Clone repo
-git clone <repo-url>
+git clone https://github.com/asyralalfani/gateway-nova.git
 cd gateway-nova
 
 # Copy env file
