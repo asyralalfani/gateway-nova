@@ -16,6 +16,7 @@
 - 🔌 **Customizable ports** — `APP_PORT` & `POSTGRES_PORT` via `.env`, defaults are non-standard to avoid clashes
 - 🟢 **Status pings** — optional sidecar polls every tool URL and shows live up/down dots
 - ⭐ **Personal favorites** — pin your most-used tools to the top (per-browser, no account required)
+- 📥 **Bulk import** — upload CSV or JSON to add many tools at once, with a preview before commit
 
 ## 🚀 Quick Start (Production)
 
@@ -104,6 +105,38 @@ NEXTAUTH_URL="http://localhost:3100"        # match APP_PORT
 > Internal container ports (3000 for the app, 5432 for postgres) stay the same.
 
 Full env var reference in [ARCHITECTURE.md](./ARCHITECTURE.md#environment-variables).
+
+## 📥 Bulk import
+
+Go to **`/dashboard/import`** (or click **Import** on the Manage Tools page) to add many tools at once from a CSV or JSON file.
+
+- Download a starter template right from the page (`CSV template` or `JSON template`)
+- Paste content into the textarea or pick a file with `Choose file…`
+- A preview table shows valid rows in green and invalid rows in red with the exact validation error
+- New **categories** and **tags** are created automatically — no need to pre-create them
+- Tools with a **name that already exists are skipped** (no duplicates, no overwrites)
+
+**CSV format:**
+```csv
+name,url,description,category,tags,iconUrl
+Jenkins,https://jenkins.example.com,Main CI pipeline,DevOps,"internal,production",
+Grafana,https://grafana.example.com,Metrics dashboards,Monitoring,production,
+```
+
+**JSON format:**
+```json
+[
+  {
+    "name": "Jenkins",
+    "url": "https://jenkins.example.com",
+    "description": "Main CI pipeline",
+    "category": "DevOps",
+    "tags": ["internal", "production"]
+  }
+]
+```
+
+Required fields: `name`, `url`, `category`. Optional: `description`, `iconUrl`, `tags`.
 
 ## 🐳 Deployment
 
