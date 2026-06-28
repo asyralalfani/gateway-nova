@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Gateway Nova",
-  description: "Daftar tools internal tim dalam satu tempat",
+  description: "Your team's internal tools in one place",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} min-h-dvh font-sans antialiased`}>
         <ThemeProvider
           attribute="class"

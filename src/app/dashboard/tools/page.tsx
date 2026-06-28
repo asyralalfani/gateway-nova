@@ -17,21 +17,21 @@ export default async function ToolsListPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kelola Tools</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Manage Tools</h1>
           <p className="text-sm text-muted-foreground">
-            {tools.length} tool terdaftar
+            {tools.length} tools registered
           </p>
         </div>
         <Button asChild className="rounded-xl">
           <Link href="/dashboard/tools/new">
-            <Plus className="mr-1.5 h-4 w-4" /> Tool baru
+            <Plus className="mr-1.5 h-4 w-4" /> New tool
           </Link>
         </Button>
       </div>
 
       {tools.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-          Belum ada tool. Tambahkan tool pertama.
+          No tools yet. Add your first tool.
         </p>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-soft">

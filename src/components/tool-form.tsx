@@ -39,13 +39,13 @@ export function ToolForm({ action, categories, tags, tool }: Props) {
   return (
     <form action={formAction} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="name">Nama</Label>
+        <Label htmlFor="name">Name</Label>
         <Input
           id="name"
           name="name"
           required
           defaultValue={tool?.name}
-          placeholder="Misal: Jenkins Production"
+          placeholder="e.g. Jenkins Production"
         />
       </div>
 
@@ -62,29 +62,29 @@ export function ToolForm({ action, categories, tags, tool }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Deskripsi</Label>
+        <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
           name="description"
           defaultValue={tool?.description ?? ""}
-          placeholder="Penjelasan singkat (opsional)"
+          placeholder="Short description (optional)"
           rows={3}
         />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="iconUrl">URL Icon</Label>
+          <Label htmlFor="iconUrl">Icon URL</Label>
           <Input
             id="iconUrl"
             name="iconUrl"
             defaultValue={tool?.iconUrl ?? ""}
-            placeholder="https://… (opsional)"
+            placeholder="https://… (optional)"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="order">Urutan</Label>
+          <Label htmlFor="order">Order</Label>
           <Input
             id="order"
             name="order"
@@ -96,7 +96,7 @@ export function ToolForm({ action, categories, tags, tool }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="categoryId">Kategori</Label>
+        <Label htmlFor="categoryId">Category</Label>
         <select
           id="categoryId"
           name="categoryId"
@@ -105,7 +105,7 @@ export function ToolForm({ action, categories, tags, tool }: Props) {
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <option value="" disabled>
-            Pilih kategori…
+            Pick a category…
           </option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
@@ -147,7 +147,7 @@ export function ToolForm({ action, categories, tags, tool }: Props) {
         <p className="text-sm text-destructive">{state.error}</p>
       ) : null}
 
-      <SubmitButton label={tool ? "Simpan perubahan" : "Tambah tool"} />
+      <SubmitButton label={tool ? "Save changes" : "Add tool"} />
     </form>
   );
 }
@@ -156,7 +156,7 @@ function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Menyimpan…" : label}
+      {pending ? "Saving…" : label}
     </Button>
   );
 }

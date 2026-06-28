@@ -32,7 +32,7 @@ export function TagFilter({ tags, activeTag, query }: Props) {
           !activeTag && "border-transparent bg-foreground text-background hover:bg-foreground",
         )}
       >
-        Semua
+        All
       </Link>
       {tags.map((tag) => {
         const active = tag.name === activeTag;

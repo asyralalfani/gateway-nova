@@ -28,7 +28,7 @@ export function LoginForm() {
             redirect: false,
           });
           if (res?.error) {
-            setError("Username atau password salah");
+            setError("Incorrect username or password");
             return;
           }
           router.push("/dashboard/tools");
@@ -52,7 +52,7 @@ export function LoginForm() {
       </div>
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Memproses…" : "Masuk"}
+        {pending ? "Signing in…" : "Sign in"}
       </Button>
     </form>
   );

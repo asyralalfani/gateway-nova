@@ -22,7 +22,7 @@ export async function createTag(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Gagal membuat tag",
+      error: err instanceof Error ? err.message : "Failed to create tag",
     };
   }
 

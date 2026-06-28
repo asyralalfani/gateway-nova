@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 
 const TABS = [
   { href: "/dashboard/tools", label: "Tools", icon: Wrench },
-  { href: "/dashboard/categories", label: "Kategori", icon: FolderTree },
-  { href: "/dashboard/tags", label: "Tag", icon: Tag },
+  { href: "/dashboard/categories", label: "Categories", icon: FolderTree },
+  { href: "/dashboard/tags", label: "Tags", icon: Tag },
 ];
 
 export default async function DashboardLayout({

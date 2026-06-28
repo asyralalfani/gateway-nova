@@ -39,7 +39,7 @@ export async function createCategory(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Gagal membuat kategori",
+      error: err instanceof Error ? err.message : "Failed to create category",
     };
   }
 
@@ -70,7 +70,7 @@ export async function updateCategory(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Gagal mengupdate kategori",
+      error: err instanceof Error ? err.message : "Failed to update category",
     };
   }
 

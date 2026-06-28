@@ -48,7 +48,7 @@ export async function createTool(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Gagal membuat tool",
+      error: err instanceof Error ? err.message : "Failed to create tool",
     };
   }
 
@@ -87,7 +87,7 @@ export async function updateTool(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Gagal mengupdate tool",
+      error: err instanceof Error ? err.message : "Failed to update tool",
     };
   }
 

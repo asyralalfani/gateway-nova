@@ -46,7 +46,7 @@ export function SearchBar() {
       <Input
         ref={inputRef}
         type="search"
-        placeholder="Cari tool, kategori, atau tag…"
+        placeholder="Search tools, categories, or tags…"
         className="h-11 rounded-xl border-border/60 bg-card pl-10 pr-20 shadow-soft transition-shadow focus-visible:shadow-glow"
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -55,7 +55,7 @@ export function SearchBar() {
         <button
           type="button"
           onClick={() => setValue("")}
-          aria-label="Hapus pencarian"
+          aria-label="Clear search"
           className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />

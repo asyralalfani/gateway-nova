@@ -11,9 +11,9 @@ export default async function NewToolPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Tool baru</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">New tool</h1>
         <p className="text-sm text-muted-foreground">
-          Tambahkan link tool yang dipakai tim.
+          Add a link for a tool your team uses.
         </p>
       </div>
       <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-soft">

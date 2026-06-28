@@ -21,7 +21,7 @@ export function TagForm({ action }: Props) {
   useEffect(() => {
     if (state?.ok) {
       formRef.current?.reset();
-      toast.success("Tag ditambahkan");
+      toast.success("Tag added");
     } else if (state?.error) {
       toast.error(state.error);
     }
@@ -29,7 +29,7 @@ export function TagForm({ action }: Props) {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-3">
-      <Input name="name" placeholder="Nama tag" required />
+      <Input name="name" placeholder="Tag name" required />
       <SubmitButton />
     </form>
   );
@@ -39,7 +39,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="sm" disabled={pending} className="w-full">
-      {pending ? "Menyimpan…" : "Tambah"}
+      {pending ? "Saving…" : "Add"}
     </Button>
   );
 }

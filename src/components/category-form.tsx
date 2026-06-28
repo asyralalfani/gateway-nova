@@ -31,23 +31,23 @@ export function CategoryForm({ action, category }: Props) {
   return (
     <form action={formAction} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="name">Nama</Label>
+        <Label htmlFor="name">Name</Label>
         <Input
           id="name"
           name="name"
           required
           defaultValue={category?.name}
-          placeholder="Misal: DevOps"
+          placeholder="e.g. DevOps"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Deskripsi</Label>
+        <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
           name="description"
           defaultValue={category?.description ?? ""}
-          placeholder="Penjelasan singkat (opsional)"
+          placeholder="Short description (optional)"
           rows={2}
         />
       </div>
@@ -59,12 +59,12 @@ export function CategoryForm({ action, category }: Props) {
             id="icon"
             name="icon"
             defaultValue={category?.icon ?? ""}
-            placeholder="emoji / nama"
+            placeholder="emoji / name"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="color">Warna</Label>
+          <Label htmlFor="color">Color</Label>
           <Input
             id="color"
             name="color"
@@ -76,7 +76,7 @@ export function CategoryForm({ action, category }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="order">Urutan</Label>
+          <Label htmlFor="order">Order</Label>
           <Input
             id="order"
             name="order"
@@ -91,7 +91,7 @@ export function CategoryForm({ action, category }: Props) {
         <p className="text-sm text-destructive">{state.error}</p>
       ) : null}
 
-      <SubmitButton label={category ? "Simpan perubahan" : "Tambah kategori"} />
+      <SubmitButton label={category ? "Save changes" : "Add category"} />
     </form>
   );
 }
@@ -100,7 +100,7 @@ function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Menyimpan…" : label}
+      {pending ? "Saving…" : label}
     </Button>
   );
 }

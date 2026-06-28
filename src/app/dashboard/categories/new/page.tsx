@@ -5,9 +5,9 @@ export default function NewCategoryPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Kategori baru</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">New category</h1>
         <p className="text-sm text-muted-foreground">
-          Buat kelompok untuk mengorganisir tools.
+          Create a group to organize tools.
         </p>
       </div>
       <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-soft">

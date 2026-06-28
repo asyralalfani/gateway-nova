@@ -81,17 +81,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 });
 
 /**
- * Cek apakah user current boleh CRUD.
- * - Kalau AUTH_ENABLED=false: semua boleh (return null = no-user mode)
- * - Kalau AUTH_ENABLED=true: harus login dengan role ADMIN/EDITOR
+ * Check whether the current user is allowed to perform CRUD operations.
+ * - When AUTH_ENABLED=false: everyone is allowed (returns null = no-user mode).
+ * - When AUTH_ENABLED=true: the user must be signed in as ADMIN or EDITOR.
  */
 export async function requireEditor() {
   if (!env.authEnabled) return null;
 
   const session = await auth();
-  if (!session?.user) throw new Error("Tidak terautentikasi");
+  if (!session?.user) throw new Error("Not authenticated");
   if (session.user.role !== "ADMIN" && session.user.role !== "EDITOR") {
-    throw new Error("Tidak memiliki akses");
+    throw new Error("Access denied");
   }
   return session.user;
 }
@@ -100,8 +100,8 @@ export async function requireAdmin() {
   if (!env.authEnabled) return null;
 
   const session = await auth();
-  if (!session?.user) throw new Error("Tidak terautentikasi");
-  if (session.user.role !== "ADMIN") throw new Error("Hanya admin");
+  if (!session?.user) throw new Error("Not authenticated");
+  if (session.user.role !== "ADMIN") throw new Error("Admin only");
   return session.user;
 }
 

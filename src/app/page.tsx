@@ -133,17 +133,16 @@ function Hero({
             <span>Live</span>
             <span className="text-border">·</span>
             <span className="font-semibold text-foreground/80">{totalTools}</span>
-            <span>tools terdaftar</span>
+            <span>tools registered</span>
           </div>
           <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-5xl">
-            Semua tools tim,{" "}
+            All your team's tools,{" "}
             <span className="text-gradient-brand inline-block">
-              dalam satu tempat
+              in one place
             </span>
           </h1>
           <p className="max-w-prose text-sm text-muted-foreground sm:text-base">
-            Pencarian cepat, dikelompokkan per kategori, dan bisa diedit oleh
-            siapa pun di tim.
+            Fast search, grouped by category, and editable by anyone on the team.
           </p>
         </div>
 
@@ -162,7 +161,7 @@ function Hero({
                   className="absolute inset-0 -z-10 bg-shimmer bg-[length:200%_100%] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:animate-shimmer"
                 />
                 <Plus className="mr-1.5 h-4 w-4 transition-transform group-hover:rotate-90" />
-                Tool baru
+                New tool
               </Link>
             </Button>
           </div>
@@ -177,13 +176,13 @@ function Hero({
           />
           <Stat
             icon={FolderTree}
-            label="Kategori"
+            label="Categories"
             value={String(totalCategories)}
             accent="violet"
           />
           <Stat
             icon={TagIcon}
-            label="Tag"
+            label="Tags"
             value={String(totalTags)}
             accent="sky"
           />
@@ -257,9 +256,9 @@ function EmptyState({ search, tag }: { search?: string; tag?: string }) {
     return (
       <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
         <p className="text-sm text-muted-foreground">
-          Tidak ada tool yang cocok
-          {search ? ` dengan "${search}"` : ""}
-          {tag ? ` pada tag "${tag}"` : ""}.
+          No tools match
+          {search ? ` "${search}"` : ""}
+          {tag ? ` in tag "${tag}"` : ""}.
         </p>
       </div>
     );
@@ -267,16 +266,16 @@ function EmptyState({ search, tag }: { search?: string; tag?: string }) {
 
   return (
     <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
-      <h2 className="text-base font-medium">Belum ada tool</h2>
+      <h2 className="text-base font-medium">No tools yet</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Mulai dengan menambahkan kategori, lalu tambahkan tool.
+        Start by adding a category, then add a tool.
       </p>
       <div className="mt-4 flex justify-center gap-2">
         <Button asChild variant="outline" className="rounded-xl">
-          <Link href="/dashboard/categories/new">Tambah kategori</Link>
+          <Link href="/dashboard/categories/new">Add category</Link>
         </Button>
         <Button asChild className="rounded-xl">
-          <Link href="/dashboard/tools/new">Tambah tool</Link>
+          <Link href="/dashboard/tools/new">Add tool</Link>
         </Button>
       </div>
     </div>

@@ -62,18 +62,18 @@ async function fetchQuote(): Promise<DailyQuote> {
 }
 
 function describeWeatherCode(code: number): { description: string; icon: string } {
-  if (code === 0) return { description: "Cerah", icon: "☀️" };
-  if (code <= 2) return { description: "Berawan sebagian", icon: "⛅" };
-  if (code === 3) return { description: "Berawan", icon: "☁️" };
-  if (code === 45 || code === 48) return { description: "Berkabut", icon: "🌫️" };
-  if (code >= 51 && code <= 57) return { description: "Gerimis", icon: "🌦️" };
-  if (code >= 61 && code <= 65) return { description: "Hujan", icon: "🌧️" };
-  if (code === 66 || code === 67) return { description: "Hujan dingin", icon: "🌧️" };
-  if (code >= 71 && code <= 77) return { description: "Salju", icon: "🌨️" };
-  if (code >= 80 && code <= 82) return { description: "Hujan deras", icon: "🌧️" };
-  if (code === 85 || code === 86) return { description: "Salju lebat", icon: "🌨️" };
-  if (code === 95) return { description: "Badai petir", icon: "⛈️" };
-  if (code >= 96) return { description: "Badai petir & hujan es", icon: "⛈️" };
+  if (code === 0) return { description: "Clear", icon: "☀️" };
+  if (code <= 2) return { description: "Partly cloudy", icon: "⛅" };
+  if (code === 3) return { description: "Cloudy", icon: "☁️" };
+  if (code === 45 || code === 48) return { description: "Foggy", icon: "🌫️" };
+  if (code >= 51 && code <= 57) return { description: "Drizzle", icon: "🌦️" };
+  if (code >= 61 && code <= 65) return { description: "Rain", icon: "🌧️" };
+  if (code === 66 || code === 67) return { description: "Freezing rain", icon: "🌧️" };
+  if (code >= 71 && code <= 77) return { description: "Snow", icon: "🌨️" };
+  if (code >= 80 && code <= 82) return { description: "Heavy rain", icon: "🌧️" };
+  if (code === 85 || code === 86) return { description: "Heavy snow", icon: "🌨️" };
+  if (code === 95) return { description: "Thunderstorm", icon: "⛈️" };
+  if (code >= 96) return { description: "Thunderstorm with hail", icon: "⛈️" };
   return { description: "—", icon: "🌡️" };
 }
 
@@ -89,10 +89,10 @@ function getJakartaHour(): number {
 function getGreeting(name: string | null): { greeting: string; suffix: string } {
   const hour = getJakartaHour();
   let greeting: string;
-  if (hour >= 4 && hour < 11) greeting = "Selamat pagi";
-  else if (hour >= 11 && hour < 15) greeting = "Selamat siang";
-  else if (hour >= 15 && hour < 18) greeting = "Selamat sore";
-  else greeting = "Selamat malam";
+  if (hour >= 4 && hour < 12) greeting = "Good morning";
+  else if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+  else if (hour >= 17 && hour < 21) greeting = "Good evening";
+  else greeting = "Good night";
   return name ? { greeting, suffix: `, ${name}` } : { greeting, suffix: "!" };
 }
 
@@ -154,7 +154,7 @@ export async function DailyBriefing() {
                   <span>{weather.description}</span>
                 </>
               ) : (
-                "Semoga harimu produktif"
+                "Have a productive day"
               )}
             </p>
           </div>

@@ -23,7 +23,7 @@ export function UserMenu({ user }: Props) {
     return (
       <Button variant="outline" size="sm" asChild>
         <Link href="/login">
-          <LogIn className="mr-2 h-4 w-4" /> Masuk
+          <LogIn className="mr-2 h-4 w-4" /> Sign in
         </Link>
       </Button>
     );
@@ -46,7 +46,7 @@ export function UserMenu({ user }: Props) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-          <LogOut className="mr-2 h-4 w-4" /> Keluar
+          <LogOut className="mr-2 h-4 w-4" /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

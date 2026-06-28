@@ -256,7 +256,7 @@ export function CommandPalette() {
           aria-describedby={undefined}
         >
           <DialogPrimitive.Title className="sr-only">
-            Cari tool
+            Search tools
           </DialogPrimitive.Title>
 
           {/* Subtle top border accent (static, cheap) */}
@@ -273,7 +273,7 @@ export function CommandPalette() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onInputKeyDown}
-                placeholder="Cari tool berdasarkan nama, tag, atau kategori..."
+                placeholder="Search tools by name, tag, or category..."
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                 autoComplete="off"
                 spellCheck={false}
@@ -296,7 +296,7 @@ export function CommandPalette() {
                   {showingRecent && (
                     <div className="mb-1 flex items-center gap-1.5 px-2 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                       <Clock className="h-3 w-3" />
-                      Baru-baru ini
+                      Recent
                     </div>
                   )}
                   {results.map((item, idx) => (
@@ -325,13 +325,13 @@ export function CommandPalette() {
                   <kbd className="rounded border border-border/60 bg-background/60 px-1.5 py-0.5 font-medium">
                     ↑↓
                   </kbd>
-                  navigasi
+                  navigate
                 </span>
                 <span className="flex items-center gap-1">
                   <kbd className="inline-flex items-center gap-0.5 rounded border border-border/60 bg-background/60 px-1.5 py-0.5 font-medium">
                     <CornerDownLeft className="h-2.5 w-2.5" />
                   </kbd>
-                  buka
+                  open
                 </span>
                 <span className="hidden items-center gap-1 sm:flex">
                   <kbd className="rounded border border-border/60 bg-background/60 px-1.5 py-0.5 font-medium">
@@ -451,8 +451,8 @@ function EmptyResults({ query }: { query: string }) {
       <Search className="h-5 w-5 text-muted-foreground/60" />
       <p className="text-sm text-muted-foreground">
         {query
-          ? `Tidak ada tool yang cocok dengan "${query}".`
-          : "Belum ada tool. Tambahkan dari dashboard."}
+          ? `No tools match "${query}".`
+          : "No tools yet. Add some from the dashboard."}
       </p>
     </div>
   );

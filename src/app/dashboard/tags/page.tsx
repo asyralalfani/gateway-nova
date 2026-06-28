@@ -13,15 +13,15 @@ export default async function TagsPage() {
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kelola Tag</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Manage Tags</h1>
           <p className="text-sm text-muted-foreground">
-            Tag bisa dipasang ke beberapa tools sekaligus.
+            A tag can be attached to multiple tools at once.
           </p>
         </div>
 
         {tags.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-            Belum ada tag.
+            No tags yet.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">
@@ -36,7 +36,7 @@ export default async function TagsPage() {
                 </span>
                 <DeleteButton
                   label=""
-                  confirmText={`Hapus tag "${tag.name}"?`}
+                  confirmText={`Delete tag "${tag.name}"?`}
                   action={async () => {
                     "use server";
                     await deleteTag(tag.id);
@@ -50,7 +50,7 @@ export default async function TagsPage() {
 
       <aside className="h-fit rounded-2xl border border-border/60 bg-card p-5 shadow-soft">
         <h2 className="mb-3 text-sm font-semibold tracking-tight">
-          Tambah tag baru
+          Add a new tag
         </h2>
         <TagForm action={createTag} />
       </aside>

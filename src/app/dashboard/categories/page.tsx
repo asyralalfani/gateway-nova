@@ -17,22 +17,22 @@ export default async function CategoriesListPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Kelola Kategori
+            Manage Categories
           </h1>
           <p className="text-sm text-muted-foreground">
-            {categories.length} kategori
+            {categories.length} categories
           </p>
         </div>
         <Button asChild className="rounded-xl">
           <Link href="/dashboard/categories/new">
-            <Plus className="mr-1.5 h-4 w-4" /> Kategori baru
+            <Plus className="mr-1.5 h-4 w-4" /> New category
           </Link>
         </Button>
       </div>
 
       {categories.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-          Belum ada kategori.
+          No categories yet.
         </p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -63,7 +63,7 @@ export default async function CategoriesListPage() {
                   </Button>
                   <DeleteButton
                     label=""
-                    confirmText={`Hapus kategori "${cat.name}"? Semua tools di dalamnya akan ikut terhapus.`}
+                    confirmText={`Delete category "${cat.name}"? All tools inside it will also be deleted.`}
                     action={async () => {
                       "use server";
                       await deleteCategory(cat.id);

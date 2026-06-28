@@ -14,7 +14,7 @@ type Props = {
 
 export function DeleteButton({
   action,
-  confirmText = "Yakin ingin menghapus?",
+  confirmText = "Are you sure you want to delete this?",
   label,
 }: Props) {
   const [pending, startTransition] = useTransition();
@@ -30,17 +30,17 @@ export function DeleteButton({
         startTransition(async () => {
           try {
             await action();
-            toast.success("Berhasil dihapus");
+            toast.success("Deleted successfully");
           } catch (err) {
             toast.error(
-              err instanceof Error ? err.message : "Gagal menghapus",
+              err instanceof Error ? err.message : "Failed to delete",
             );
           }
         });
       }}
     >
       <Trash2 className="mr-1 h-4 w-4" />
-      {label ?? "Hapus"}
+      {label ?? "Delete"}
     </Button>
   );
 }

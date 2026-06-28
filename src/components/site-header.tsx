@@ -31,7 +31,7 @@ export async function SiteHeader() {
           <Button variant="ghost" size="sm" asChild>
             <Link href="/dashboard/tools">
               <Settings className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Kelola</span>
+              <span className="hidden sm:inline">Manage</span>
             </Link>
           </Button>
           <ThemeToggle />
