@@ -229,6 +229,7 @@ A ready-to-use `backup` service is already in `docker-compose.yml` (commented ou
 - [PROJECT.md](./PROJECT.md) — overview, scope, roadmap
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — technical decisions & architecture
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — development guide
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — runtime issues & fixes (pinger, migrations, env vars)
 - [CLAUDE.md](./CLAUDE.md) — guide for AI assistants (Claude Code)
 
 ## 📝 License
