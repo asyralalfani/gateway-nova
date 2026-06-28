@@ -22,14 +22,14 @@ function slugify(name: string): string {
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { q?: string; tag?: string };
+type SearchParams = { q?: string; tag?: string; cat?: string };
 
 export default async function HomePage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { q, tag } = await searchParams;
+  const { q, tag, cat } = await searchParams;
   const search = q?.trim();
 
   const [categories, allTags, totalsRaw] = await Promise.all([
@@ -70,16 +70,37 @@ export default async function HomePage({
   ]);
 
   const [totalTools, totalCategories, totalTags] = totalsRaw;
-  const visible = categories.filter((c) => c.tools.length > 0);
+  const visibleAll = categories.filter((c) => c.tools.length > 0);
+  const visible = cat
+    ? visibleAll.filter((c) => slugify(c.name) === cat)
+    : visibleAll;
   const visibleTools = visible.reduce((acc, c) => acc + c.tools.length, 0);
   const filtered = Boolean(search) || Boolean(tag);
-  const allTools = visible.flatMap((c) => c.tools);
-  const navItems = visible.map((c) => ({
-    id: c.id,
-    slug: slugify(c.name),
-    name: c.name,
-    count: c.tools.length,
-  }));
+  const allTools = visibleAll.flatMap((c) => c.tools);
+  const totalVisibleCount = visibleAll.reduce(
+    (acc, c) => acc + c.tools.length,
+    0,
+  );
+
+  function buildHref(catSlug: string | null): string {
+    const params = new URLSearchParams();
+    if (search) params.set("q", search);
+    if (tag) params.set("tag", tag);
+    if (catSlug) params.set("cat", catSlug);
+    const qs = params.toString();
+    return qs ? `/?${qs}` : "/";
+  }
+
+  const navItems = visibleAll.map((c) => {
+    const slug = slugify(c.name);
+    return {
+      id: c.id,
+      slug,
+      name: c.name,
+      count: c.tools.length,
+      href: buildHref(slug),
+    };
+  });
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -90,15 +111,20 @@ export default async function HomePage({
         totalTools={totalTools}
         totalCategories={totalCategories}
         totalTags={totalTags}
-        filtered={filtered}
+        filtered={filtered || Boolean(cat)}
       />
 
       <TagFilter tags={allTags} activeTag={tag} query={search} />
 
-      {!filtered ? <FavoritesSection allTools={allTools} /> : null}
+      {!filtered && !cat ? <FavoritesSection allTools={allTools} /> : null}
 
       {!filtered && navItems.length >= 2 ? (
-        <CategoryNav items={navItems} />
+        <CategoryNav
+          items={navItems}
+          activeSlug={cat ?? null}
+          allHref={buildHref(null)}
+          totalCount={totalVisibleCount}
+        />
       ) : null}
 
       {visible.length === 0 ? (
