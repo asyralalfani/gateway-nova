@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { FavoriteToggle } from "@/components/favorite-toggle";
 
 type Props = {
   tool: {
@@ -46,7 +49,10 @@ export function ToolCard({ tool }: Props) {
             </p>
           </div>
         </div>
-        <ArrowUpRight className="h-4 w-4 flex-none text-muted-foreground transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" />
+        <div className="flex flex-none items-center gap-1">
+          <FavoriteToggle toolId={tool.id} />
+          <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" />
+        </div>
       </div>
 
       {tool.description ? (

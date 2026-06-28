@@ -4,6 +4,7 @@ import { Plus, FolderTree, Tag as TagIcon, LayoutGrid } from "lucide-react";
 import { db } from "@/lib/db";
 import { CategorySection } from "@/components/category-section";
 import { DailyBriefing } from "@/components/daily-briefing";
+import { FavoritesSection } from "@/components/favorites-section";
 import { SearchBar } from "@/components/search-bar";
 import { TagFilter } from "@/components/tag-filter";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,7 @@ export default async function HomePage({
   const visible = categories.filter((c) => c.tools.length > 0);
   const visibleTools = visible.reduce((acc, c) => acc + c.tools.length, 0);
   const filtered = Boolean(search) || Boolean(tag);
+  const allTools = visible.flatMap((c) => c.tools);
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -75,6 +77,8 @@ export default async function HomePage({
       />
 
       <TagFilter tags={allTags} activeTag={tag} query={search} />
+
+      {!filtered ? <FavoritesSection allTools={allTools} /> : null}
 
       {visible.length === 0 ? (
         <EmptyState search={search} tag={tag} />
