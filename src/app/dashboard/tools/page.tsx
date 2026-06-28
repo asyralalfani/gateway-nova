@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil, ExternalLink } from "lucide-react";
+import { Plus, Pencil, ExternalLink, Upload } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,18 @@ export default async function ToolsListPage() {
             {tools.length} tools registered
           </p>
         </div>
-        <Button asChild className="rounded-xl">
-          <Link href="/dashboard/tools/new">
-            <Plus className="mr-1.5 h-4 w-4" /> New tool
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline" className="rounded-xl">
+            <Link href="/dashboard/import">
+              <Upload className="mr-1.5 h-4 w-4" /> Import
+            </Link>
+          </Button>
+          <Button asChild className="rounded-xl">
+            <Link href="/dashboard/tools/new">
+              <Plus className="mr-1.5 h-4 w-4" /> New tool
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {tools.length === 0 ? (
