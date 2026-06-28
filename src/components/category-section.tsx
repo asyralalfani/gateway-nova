@@ -8,15 +8,16 @@ type Props = {
     color: string | null;
   };
   tools: React.ComponentProps<typeof ToolCard>["tool"][];
+  slug: string;
 };
 
-export function CategorySection({ category, tools }: Props) {
+export function CategorySection({ category, tools, slug }: Props) {
   if (tools.length === 0) return null;
 
   const accent = category.color ?? "hsl(var(--brand))";
 
   return (
-    <section className="space-y-4">
+    <section id={slug} className="scroll-mt-32 space-y-4">
       <div className="flex items-baseline gap-3">
         <span
           aria-hidden

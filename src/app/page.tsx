@@ -2,12 +2,23 @@ import Link from "next/link";
 import { Plus, FolderTree, Tag as TagIcon, LayoutGrid } from "lucide-react";
 
 import { db } from "@/lib/db";
+import { CategoryNav } from "@/components/category-nav";
 import { CategorySection } from "@/components/category-section";
 import { DailyBriefing } from "@/components/daily-briefing";
 import { FavoritesSection } from "@/components/favorites-section";
 import { SearchBar } from "@/components/search-bar";
 import { TagFilter } from "@/components/tag-filter";
 import { Button } from "@/components/ui/button";
+
+function slugify(name: string): string {
+  return (
+    "cat-" +
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+  );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +74,12 @@ export default async function HomePage({
   const visibleTools = visible.reduce((acc, c) => acc + c.tools.length, 0);
   const filtered = Boolean(search) || Boolean(tag);
   const allTools = visible.flatMap((c) => c.tools);
+  const navItems = visible.map((c) => ({
+    id: c.id,
+    slug: slugify(c.name),
+    name: c.name,
+    count: c.tools.length,
+  }));
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -80,6 +97,10 @@ export default async function HomePage({
 
       {!filtered ? <FavoritesSection allTools={allTools} /> : null}
 
+      {!filtered && navItems.length >= 2 ? (
+        <CategoryNav items={navItems} />
+      ) : null}
+
       {visible.length === 0 ? (
         <EmptyState search={search} tag={tag} />
       ) : (
@@ -89,6 +110,7 @@ export default async function HomePage({
               key={category.id}
               category={category}
               tools={category.tools}
+              slug={slugify(category.name)}
             />
           ))}
         </div>
