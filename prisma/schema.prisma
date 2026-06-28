@@ -1,6 +1,6 @@
 // prisma/schema.prisma
-// Database schema untuk Gateway Nova
-// Pelajari Prisma: https://pris.ly/d/prisma-schema
+// Database schema for Gateway Nova
+// Learn Prisma: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -12,13 +12,13 @@ datasource db {
 }
 
 // ===== Tool =====
-// Satu entri tool/URL yang ditampilkan di homepage
+// A single tool/URL entry shown on the homepage
 model Tool {
   id          String   @id @default(cuid())
   name        String
   url         String
   description String?
-  iconUrl     String?  // Path/URL ke icon, atau identifier dari icon library
+  iconUrl     String?  // Path/URL to an icon, or an identifier from an icon library
   order       Int      @default(0)
 
   categoryId String
@@ -28,20 +28,20 @@ model Tool {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  createdBy String?  // User ID (null kalau auth disabled)
+  createdBy String?  // User ID (null when auth is disabled)
 
   @@index([categoryId])
   @@index([order])
 }
 
 // ===== Category =====
-// Pengelompokan tools (misal: "DevOps", "Monitoring", "Docs")
+// Tool grouping (e.g. "DevOps", "Monitoring", "Docs")
 model Category {
   id          String  @id @default(cuid())
   name        String  @unique
   description String?
   icon        String?
-  color       String? // Hex color (misal: "#3b82f6")
+  color       String? // Hex color (e.g. "#3b82f6")
   order       Int     @default(0)
 
   tools Tool[]
@@ -53,7 +53,7 @@ model Category {
 }
 
 // ===== Tag =====
-// Tag bebas untuk filter (misal: "production", "internal", "monitoring")
+// Free-form tags for filtering (e.g. "production", "internal", "monitoring")
 model Tag {
   id    String    @id @default(cuid())
   name  String    @unique
@@ -72,7 +72,7 @@ model ToolTag {
 }
 
 // ===== User =====
-// Hanya dipakai kalau AUTH_ENABLED=true
+// Only used when AUTH_ENABLED=true
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
@@ -83,7 +83,7 @@ model User {
 }
 
 enum Role {
-  ADMIN   // Bisa manage user dan semua data
-  EDITOR  // Bisa CRUD tools & categories
-  VIEWER  // Hanya bisa lihat
+  ADMIN   // Can manage users and all data
+  EDITOR  // Can CRUD tools & categories
+  VIEWER  // Read-only
 }

@@ -1,10 +1,10 @@
 #!/bin/sh
 # docker-entrypoint.sh
-# Jalankan migration database sebelum start aplikasi
+# Run database migrations before starting the app
 set -e
 
-echo "▶ Menjalankan database migration..."
+echo "▶ Running database migrations..."
 npx prisma migrate deploy
 
-echo "▶ Memulai aplikasi..."
+echo "▶ Starting the app..."
 exec "$@"

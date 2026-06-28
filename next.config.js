@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Standalone output untuk Docker (smaller image, no need to install deps)
+  // Standalone output for Docker (smaller image, no need to install deps)
   output: "standalone",
 
-  // Prisma query engine binary tidak ikut ter-trace otomatis oleh Next.js.
-  // Include manual supaya ada di .next/standalone saat run di container.
+  // The Prisma query engine binary isn't traced automatically by Next.js.
+  // Include it manually so it lands in .next/standalone when running in the container.
   outputFileTracingIncludes: {
     "/**/*": [
       "./node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/*.node",
@@ -15,11 +15,11 @@ const nextConfig = {
 
   // Disable telemetry
   experimental: {
-    // Enable React Compiler kalau sudah stabil
+    // Enable React Compiler once it stabilizes
     // reactCompiler: true,
   },
 
-  // Allow optimized images dari domain mana saja (untuk icon eksternal)
+  // Allow optimized images from any domain (for external icons)
   images: {
     remotePatterns: [
       {

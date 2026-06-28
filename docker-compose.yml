@@ -1,16 +1,16 @@
 # docker-compose.yml
-# Setup production sederhana untuk Gateway Nova
+# Simple production setup for Gateway Nova
 #
-# Cara pakai:
-#   docker compose up -d           # jalankan
-#   docker compose logs -f         # lihat logs
+# Usage:
+#   docker compose up -d           # run
+#   docker compose logs -f         # tail logs
 #   docker compose pull && docker compose up -d  # update
 #
-# Catatan port:
-#   Port di host diatur lewat .env (APP_PORT, POSTGRES_PORT) supaya bisa hidup
-#   berdampingan dengan service lain di server. Port internal container tetap
-#   default (3000 untuk app, 5432 untuk postgres) karena traffic antar service
-#   lewat docker network — tidak bentrok dengan host.
+# Port notes:
+#   Host ports come from .env (APP_PORT, POSTGRES_PORT) so this can coexist
+#   with other services on the host. Internal container ports stay at the
+#   defaults (3000 for the app, 5432 for postgres) because inter-service
+#   traffic goes over the docker network — no host port collision.
 
 services:
   db:
@@ -24,11 +24,11 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-homepage}
 
     volumes:
-      # Data PostgreSQL (penting: backup folder ini)
+      # PostgreSQL data (important: back this folder up)
       - ./data/postgres:/var/lib/postgresql/data
 
-    # Bind hanya ke 127.0.0.1 supaya tidak terekspos publik di production.
-    # Tetap bisa diakses dari host untuk pnpm prisma migrate dev / prisma studio.
+    # Bind to 127.0.0.1 only so the port isn't exposed publicly in production.
+    # Still reachable from the host for pnpm prisma migrate dev / prisma studio.
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
 
@@ -56,7 +56,7 @@ services:
 
     environment:
       - NODE_ENV=production
-      # App konek ke db lewat docker network → host = "db", port internal 5432.
+      # App talks to db over the docker network → host = "db", internal port 5432.
       - DATABASE_URL=postgresql://${POSTGRES_USER:-homepage}:${POSTGRES_PASSWORD:-homepage}@db:5432/${POSTGRES_DB:-homepage}?schema=public
       - AUTH_ENABLED=${AUTH_ENABLED:-false}
       - AUTH_SECRET=${AUTH_SECRET:-}
@@ -69,7 +69,7 @@ services:
       retries: 3
       start_period: 15s
 
-    # Resource limits (sesuaikan dengan server)
+    # Resource limits (tune for your server)
     deploy:
       resources:
         limits:
@@ -79,8 +79,8 @@ services:
           cpus: '0.25'
           memory: 128M
 
-  # ====== OPSIONAL: Backup service ======
-  # Uncomment jika mau backup otomatis ke folder backups/
+  # ====== OPTIONAL: Backup service ======
+  # Uncomment to enable automatic backups to the backups/ folder.
   #
   # backup:
   #   image: postgres:16-alpine

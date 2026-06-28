@@ -38,10 +38,10 @@ export function PageBackground() {
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-50 overflow-hidden"
     >
-      {/* Grid pattern dengan fade radial */}
+      {/* Grid pattern with a radial fade */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.3] mask-radial-fade" />
 
-      {/* Floating gradient orbs — transform only, will-change biar di-promote GPU layer */}
+      {/* Floating gradient orbs — transform only; will-change promotes them to a GPU layer */}
       <div className="absolute -left-32 top-10 h-[26rem] w-[26rem] rounded-full bg-brand/25 blur-2xl animate-blob-1 [will-change:transform]" />
       <div
         className="absolute -right-24 top-1/3 h-[24rem] w-[24rem] rounded-full blur-2xl animate-blob-2 [will-change:transform]"
@@ -52,7 +52,7 @@ export function PageBackground() {
         style={{ backgroundColor: "hsl(200 95% 60% / 0.18)" }}
       />
 
-      {/* Cursor spotlight — pre-rendered div, hanya transform */}
+      {/* Cursor spotlight — pre-rendered div, transform only */}
       <div
         ref={spotlightRef}
         className="absolute left-0 top-0 h-[1200px] w-[1200px] rounded-full [will-change:transform]"

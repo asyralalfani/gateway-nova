@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
-# Multi-stage Dockerfile untuk Next.js + Prisma + PostgreSQL
-# Image akhir ringan (~150-200MB) dan jalan sebagai non-root user
+# Multi-stage Dockerfile for Next.js + Prisma + PostgreSQL
+# Final image is small (~150-200MB) and runs as a non-root user
 
 # ====== Stage 1: Dependencies ======
 FROM node:20-alpine AS deps
@@ -10,7 +10,7 @@ WORKDIR /app
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
-# Copy hanya manifest dulu untuk caching layer
+# Copy only the manifest first to cache this layer
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
 
@@ -31,7 +31,7 @@ COPY . .
 # Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build aplikasi (Next.js standalone output)
+# Build the app (Next.js standalone output)
 RUN pnpm build
 
 # ====== Stage 3: Runner ======
@@ -44,22 +44,22 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# Buat non-root user
+# Create a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Install Prisma CLI global (dipakai docker-entrypoint untuk `prisma migrate deploy`).
-# Versinya disamakan dengan @prisma/client di package.json supaya engine kompatibel.
+# Install the Prisma CLI globally (used by docker-entrypoint for `prisma migrate deploy`).
+# Keep the version in sync with @prisma/client in package.json so the engine matches.
 RUN npm install -g prisma@5.22.0
 
-# Copy hanya yang dibutuhkan dari builder.
-# Next.js standalone sudah include node_modules yang dipakai (termasuk Prisma client
-# lewat outputFileTracingIncludes di next.config.js).
+# Copy only what's needed from the builder.
+# Next.js standalone already includes the node_modules it needs (including the Prisma
+# client via outputFileTracingIncludes in next.config.js).
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
-# Entrypoint: jalankan migration sebelum start
+# Entrypoint: run migrations before starting
 COPY --chown=nextjs:nodejs docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
