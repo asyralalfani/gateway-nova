@@ -11,7 +11,7 @@ async function main() {
     update: {},
     create: {
       name: "DevOps",
-      description: "Build, deploy, dan CI/CD",
+      description: "Build, deploy, and CI/CD",
       color: "#0ea5e9",
       order: 1,
     },
@@ -22,7 +22,7 @@ async function main() {
     update: {},
     create: {
       name: "Monitoring",
-      description: "Observabilitas dan alerting",
+      description: "Observability and alerting",
       color: "#f97316",
       order: 2,
     },
@@ -33,7 +33,7 @@ async function main() {
     update: {},
     create: {
       name: "Documentation",
-      description: "Wiki dan referensi internal",
+      description: "Internal wiki and references",
       color: "#10b981",
       order: 3,
     },
@@ -66,7 +66,7 @@ async function main() {
     {
       name: "Jenkins",
       url: "https://jenkins.example.internal",
-      description: "Pipeline CI/CD utama tim",
+      description: "The team's main CI/CD pipeline",
       iconUrl: "https://www.jenkins.io/images/logos/jenkins/jenkins.svg",
       categoryId: devops.id,
       tagIds: [tagInternal.id, tagProduction.id],
@@ -82,7 +82,7 @@ async function main() {
     {
       name: "Argo CD",
       url: "https://argocd.example.internal",
-      description: "GitOps deployment ke Kubernetes",
+      description: "GitOps deployment to Kubernetes",
       iconUrl: "https://argo-cd.readthedocs.io/en/stable/assets/logo.png",
       categoryId: devops.id,
       tagIds: [tagInternal.id, tagStaging.id],
@@ -90,7 +90,7 @@ async function main() {
     {
       name: "Grafana",
       url: "https://grafana.example.internal",
-      description: "Dashboard metrics, logs, dan tracing",
+      description: "Metrics, logs, and tracing dashboards",
       iconUrl: "https://grafana.com/static/img/menu/grafana2.svg",
       categoryId: monitoring.id,
       tagIds: [tagProduction.id],
@@ -98,7 +98,7 @@ async function main() {
     {
       name: "Prometheus",
       url: "https://prometheus.example.internal",
-      description: "Metrics & time series database",
+      description: "Metrics & time-series database",
       iconUrl: "https://prometheus.io/assets/prometheus_logo_grey.svg",
       categoryId: monitoring.id,
       tagIds: [tagInternal.id],
@@ -121,7 +121,7 @@ async function main() {
     {
       name: "API Docs",
       url: "https://docs.example.internal/api",
-      description: "Referensi REST API internal",
+      description: "Internal REST API reference",
       categoryId: docs.id,
       tagIds: [tagInternal.id],
     },
@@ -144,8 +144,8 @@ async function main() {
     });
   }
 
-  // Admin user untuk kalau AUTH_ENABLED=true diaktifkan.
-  // Password awal: admin (ubah segera setelah login pertama).
+  // Default admin user — only used when AUTH_ENABLED=true.
+  // Initial password: admin (change it immediately after the first login).
   const existingAdmin = await db.user.findUnique({ where: { username: "admin" } });
   if (!existingAdmin) {
     await db.user.create({
@@ -155,10 +155,10 @@ async function main() {
         role: "ADMIN",
       },
     });
-    console.log("  ✓ User admin dibuat (password: admin) — ganti setelah login");
+    console.log("  ✓ Admin user created (password: admin) — change it after first login");
   }
 
-  console.log("✓ Seed selesai");
+  console.log("✓ Seed complete");
 }
 
 main()
