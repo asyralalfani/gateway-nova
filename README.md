@@ -118,6 +118,19 @@ docker compose logs -f app
 
 PostgreSQL is bound to `127.0.0.1` only (not exposed publicly). The app talks to the db over the docker network (`db:5432`), so `POSTGRES_PORT` only matters for host access.
 
+### Updating in production
+
+A `deploy.sh` script bundles the standard update workflow: pull → check for new env vars → back up the database → rebuild → restart → wait for `/api/health`.
+
+```bash
+./deploy.sh                 # full flow
+./deploy.sh --skip-backup   # skip the pg_dump step (faster, riskier)
+./deploy.sh --no-pull       # skip git pull (when CI already updated the tree)
+./deploy.sh --help          # usage
+```
+
+Exits 0 on success, 1 on preflight failure, 2 on deploy failure (and prints the last 30 lines of app logs). Backups land in `backups/` and a rollback hint is printed when the deploy completes.
+
 ### Behind a Reverse Proxy
 
 Example with Traefik (internal container port stays at 3000):
