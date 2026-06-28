@@ -1,0 +1,89 @@
+// prisma/schema.prisma
+// Database schema untuk Gateway Nova
+// Pelajari Prisma: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Tool =====
+// Satu entri tool/URL yang ditampilkan di homepage
+model Tool {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  description String?
+  iconUrl     String?  // Path/URL ke icon, atau identifier dari icon library
+  order       Int      @default(0)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  tags ToolTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?  // User ID (null kalau auth disabled)
+
+  @@index([categoryId])
+  @@index([order])
+}
+
+// ===== Category =====
+// Pengelompokan tools (misal: "DevOps", "Monitoring", "Docs")
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+  icon        String?
+  color       String? // Hex color (misal: "#3b82f6")
+  order       Int     @default(0)
+
+  tools Tool[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ===== Tag =====
+// Tag bebas untuk filter (misal: "production", "internal", "monitoring")
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique
+  tools ToolTag[]
+}
+
+// Junction table: Tool <-> Tag (many-to-many)
+model ToolTag {
+  toolId String
+  tagId  String
+  tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([toolId, tagId])
+  @@index([tagId])
+}
+
+// ===== User =====
+// Hanya dipakai kalau AUTH_ENABLED=true
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         Role     @default(VIEWER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN   // Bisa manage user dan semua data
+  EDITOR  // Bisa CRUD tools & categories
+  VIEWER  // Hanya bisa lihat
+}
