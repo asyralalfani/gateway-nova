@@ -24,14 +24,31 @@ type Props = {
 export function ToolCard({ tool }: Props) {
   const host = safeHost(tool.url);
   const iconSrc = tool.iconUrl ?? (host ? faviconFor(host) : null);
+  const status = tool.status ?? null;
+  const hoverBorder =
+    status === "down"
+      ? "hover:border-rose-500/50"
+      : status === "up"
+        ? "hover:border-emerald-500/40"
+        : "hover:border-brand/40";
 
   return (
     <Link
       href={tool.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex h-full flex-col gap-3 overflow-hidden rounded-xl border border-border/60 bg-card p-4 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-lifted"
+      className={`group relative flex h-full flex-col gap-3 overflow-hidden rounded-xl border border-border/60 bg-card p-4 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted ${hoverBorder}`}
     >
+      {status === "up" || status === "down" ? (
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
+            status === "up"
+              ? "bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent"
+              : "bg-gradient-to-r from-transparent via-rose-500/60 to-transparent"
+          }`}
+        />
+      ) : null}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-0 bg-gradient-to-br from-brand/0 via-transparent to-brand/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -104,14 +121,9 @@ function StatusDot({
   if (status !== "up" && status !== "down") return null;
 
   const isUp = status === "up";
-  const color = isUp ? "bg-emerald-500" : "bg-rose-500";
-  const ring = isUp
-    ? "ring-emerald-500/30 shadow-[0_0_6px_rgb(16_185_129_/_0.6)]"
-    : "ring-rose-500/30 shadow-[0_0_6px_rgb(244_63_94_/_0.6)]";
-
   const checked = checkedAt ? new Date(checkedAt) : null;
   const checkedLabel = checked ? formatRelative(checked) : "just now";
-  const detail = isUp
+  const tooltip = isUp
     ? responseMs != null
       ? `Up · ${responseMs}ms · ${checkedLabel}`
       : `Up · ${checkedLabel}`
@@ -119,12 +131,38 @@ function StatusDot({
       ? `Down · HTTP ${statusCode} · ${checkedLabel}`
       : `Down · ${checkedLabel}`;
 
+  if (isUp) {
+    return (
+      <span
+        title={tooltip}
+        aria-label={tooltip}
+        className="inline-flex flex-none items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-emerald-600 ring-1 ring-inset ring-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400"
+      >
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-emerald-500" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgb(16_185_129_/_0.8)]" />
+        </span>
+        <span className="tabular-nums">
+          {responseMs != null ? `${responseMs}ms` : "Up"}
+        </span>
+      </span>
+    );
+  }
+
   return (
     <span
-      title={detail}
-      aria-label={detail}
-      className={`relative inline-flex h-2 w-2 flex-none rounded-full ring-2 ${ring} ${color}`}
-    />
+      title={tooltip}
+      aria-label={tooltip}
+      className="inline-flex flex-none items-center gap-1.5 rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-rose-600 ring-1 ring-inset ring-rose-500/30 dark:bg-rose-500/15 dark:text-rose-400"
+    >
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-rose-500" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_5px_rgb(244_63_94_/_0.8)]" />
+      </span>
+      <span className="tabular-nums">
+        {statusCode != null ? `HTTP ${statusCode}` : "Down"}
+      </span>
+    </span>
   );
 }
 
