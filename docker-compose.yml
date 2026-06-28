@@ -79,6 +79,35 @@ services:
           cpus: '0.25'
           memory: 128M
 
+  # ====== Pinger: poll tool URLs and update status ======
+  # Only runs when PING_SECRET is set in .env. Without the secret the loop
+  # gets a 401 from the API and is effectively a no-op.
+  pinger:
+    image: curlimages/curl:8.10.1
+    container_name: gateway-nova-pinger
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      - PING_SECRET=${PING_SECRET:-}
+      - PING_INTERVAL_SECONDS=${PING_INTERVAL_SECONDS:-300}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        if [ -z "$$PING_SECRET" ]; then
+          echo "PING_SECRET not set — pinger idle. Set it in .env to enable.";
+          while true; do sleep 3600; done
+        fi
+        echo "▶ Pinger started (interval: $${PING_INTERVAL_SECONDS}s)";
+        while true; do
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $$PING_SECRET" \
+            -H "Content-Type: application/json" \
+            http://app:3000/api/ping/run || echo "  ! ping run failed";
+          sleep "$$PING_INTERVAL_SECONDS";
+        done
+
   # ====== OPTIONAL: Backup service ======
   # Uncomment to enable automatic backups to the backups/ folder.
   #

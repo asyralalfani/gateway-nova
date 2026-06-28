@@ -30,6 +30,12 @@ model Tool {
   updatedAt DateTime @updatedAt
   createdBy String?  // User ID (null when auth is disabled)
 
+  // Status snapshot (updated by the pinger job)
+  status     String?   // "up" | "down" | null = never checked
+  statusCode Int?      // HTTP code from the last ping
+  responseMs Int?      // Response time of the last successful ping
+  checkedAt  DateTime? // Timestamp of the last ping attempt
+
   @@index([categoryId])
   @@index([order])
 }

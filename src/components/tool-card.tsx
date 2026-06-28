@@ -14,6 +14,10 @@ type Props = {
     description: string | null;
     iconUrl: string | null;
     tags: { tag: { id: string; name: string } }[];
+    status?: string | null;
+    statusCode?: number | null;
+    responseMs?: number | null;
+    checkedAt?: Date | null;
   };
 };
 
@@ -41,9 +45,17 @@ export function ToolCard({ tool }: Props) {
         <div className="flex min-w-0 items-center gap-3">
           <ToolIcon iconSrc={iconSrc} name={tool.name} />
           <div className="min-w-0">
-            <p className="truncate font-medium leading-tight tracking-tight">
-              {tool.name}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <p className="truncate font-medium leading-tight tracking-tight">
+                {tool.name}
+              </p>
+              <StatusDot
+                status={tool.status ?? null}
+                statusCode={tool.statusCode ?? null}
+                responseMs={tool.responseMs ?? null}
+                checkedAt={tool.checkedAt ?? null}
+              />
+            </div>
             <p className="truncate text-xs text-muted-foreground">
               {host ?? tool.url}
             </p>
@@ -76,6 +88,56 @@ export function ToolCard({ tool }: Props) {
       ) : null}
     </Link>
   );
+}
+
+function StatusDot({
+  status,
+  statusCode,
+  responseMs,
+  checkedAt,
+}: {
+  status: string | null;
+  statusCode: number | null;
+  responseMs: number | null;
+  checkedAt: Date | string | null;
+}) {
+  if (status !== "up" && status !== "down") return null;
+
+  const isUp = status === "up";
+  const color = isUp ? "bg-emerald-500" : "bg-rose-500";
+  const ring = isUp
+    ? "ring-emerald-500/30 shadow-[0_0_6px_rgb(16_185_129_/_0.6)]"
+    : "ring-rose-500/30 shadow-[0_0_6px_rgb(244_63_94_/_0.6)]";
+
+  const checked = checkedAt ? new Date(checkedAt) : null;
+  const checkedLabel = checked ? formatRelative(checked) : "just now";
+  const detail = isUp
+    ? responseMs != null
+      ? `Up · ${responseMs}ms · ${checkedLabel}`
+      : `Up · ${checkedLabel}`
+    : statusCode != null
+      ? `Down · HTTP ${statusCode} · ${checkedLabel}`
+      : `Down · ${checkedLabel}`;
+
+  return (
+    <span
+      title={detail}
+      aria-label={detail}
+      className={`relative inline-flex h-2 w-2 flex-none rounded-full ring-2 ${ring} ${color}`}
+    />
+  );
+}
+
+function formatRelative(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.round(diffMs / 1000);
+  if (diffSec < 60) return `${diffSec}s ago`;
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  return `${diffDay}d ago`;
 }
 
 function ToolIcon({

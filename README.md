@@ -14,6 +14,8 @@
 - 🐳 **Docker-ready** — deploy with a single command (app + PostgreSQL)
 - 🔐 **Optional auth** — enable when needed, skip on a trusted internal network
 - 🔌 **Customizable ports** — `APP_PORT` & `POSTGRES_PORT` via `.env`, defaults are non-standard to avoid clashes
+- 🟢 **Status pings** — optional sidecar polls every tool URL and shows live up/down dots
+- ⭐ **Personal favorites** — pin your most-used tools to the top (per-browser, no account required)
 
 ## 🚀 Quick Start (Production)
 
@@ -117,6 +119,33 @@ docker compose logs -f app
 ```
 
 PostgreSQL is bound to `127.0.0.1` only (not exposed publicly). The app talks to the db over the docker network (`db:5432`), so `POSTGRES_PORT` only matters for host access.
+
+### Service status pings (optional)
+
+A sidecar container (`pinger`) polls each tool URL on a schedule and stores the last status on the `Tool` record. Tool cards show a small dot: green for up, red for down, hidden when never checked.
+
+Enable it by setting `PING_SECRET` in `.env`:
+
+```bash
+# Generate a random secret
+echo "PING_SECRET=$(openssl rand -hex 24)" >> .env
+docker compose up -d --build pinger
+```
+
+Tunables in `.env`:
+- `PING_ENABLED` — `false` disables the endpoint entirely (default `true`)
+- `PING_INTERVAL_SECONDS` — how often to sweep (default `300`)
+- `PING_TIMEOUT_MS` — per-URL timeout (default `5000`)
+
+To trigger a sweep manually (e.g. right after adding a new tool):
+
+```bash
+curl -X POST -H "Authorization: Bearer $PING_SECRET" \
+  http://localhost:3100/api/ping/run
+# Returns: { ok, total, up, down, durationMs }
+```
+
+Without the `pinger` sidecar you can also call the endpoint from system cron or any external scheduler.
 
 ### Updating in production
 
